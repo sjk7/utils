@@ -665,13 +665,15 @@ namespace utils {
     }
 
     [[maybe_unused]] static inline bool file_exists(std::string_view path) {
-        assert(!path.empty());
+        MYASSERT(!path.empty(), "file_exists(): filepath is empty")
         struct stat buffer;
         return stat(path.data(), &buffer) == 0;
     }
 
     [[maybe_unused]] static inline std::string file_copy(
         std::string_view path) {
+
+        MYASSERT(path.size() > 4, strings::concat("file_copy: filepath: ", path, " is too short").c_str())
         std::string copy_to = std::string(path) + ".copy";
         std::ifstream src(path.data(), std::ios::binary | std::ios::in);
         std::ofstream dst(copy_to, std::ios::binary | std::ios::out);
