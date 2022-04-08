@@ -657,10 +657,22 @@ namespace utils {
         return retval;
     }
 
-    [[maybe_unused]] static inline std::string getcwd() {
+#ifdef _WIN32
+    static constexpr auto PATH_SEP = '\\';
+    static constexpr auto PATH_SEP_STR = "\\";
+#else
+    static constexpr char PATH_SEP = '/';
+    static constexpr auto PATH_SEP_STR = "/";
+#endif
+
+    [[maybe_unused]] static inline std::string_view getcwd() {
         static std::string buf(1024, 0);
-        auto* dummy = _getcwd(&buf[0], 1024);
+        const auto* dummy = _getcwd(&buf[0], 1024);
+        if (!buf.ends_with(PATH_SEP)) {
+            buf += PATH_SEP;
+        }
         (void)dummy;
+        buf.resize(buf.find('\0'));
         return buf;
     }
 
@@ -670,31 +682,75 @@ namespace utils {
         return stat(path.data(), &buffer) == 0;
     }
 
-    [[maybe_unused]] static inline std::string file_copy(
-        std::string_view path) {
+    [[maybe_unused]] static inline std::string get_temp_file_path(
+        const std::string_view extn = ".bin") {
+        char buf[512]{};
+        tmpnam_s(buf, 512);
+        std::string ret(buf);
+        ret += extn;
+        return ret;
+    }
 
-        MYASSERT(path.size() > 4, strings::concat("file_copy: filepath: ", path, " is too short").c_str())
-        std::string copy_to = std::string(path) + ".copy";
-        std::ifstream src(path.data(), std::ios::binary | std::ios::in);
+    [[maybe_unused]] static inline std::error_code file_copy(
+        std::string_view path, std::string& out_file_path,
+        bool overwrite = false) noexcept(false) {
+
+        MYASSERT(path.size() > 4,
+            strings::concat("file_copy: filepath: ", path, " is too short")
+                .c_str())
+        std::string copy_to = out_file_path;
+        if (!out_file_path.empty()) {
+            MYASSERT(out_file_path.size() > 4,
+                strings::concat("file_copy: suspiciously short outfile path:\n",
+                    out_file_path)
+                    .c_str())
+        } else {
+            copy_to = get_temp_file_path();
+        }
+
+        bool owrite_check = !overwrite;
+        if (owrite_check) {
+            owrite_check = file_exists(copy_to);
+        }
+        MYASSERT(!owrite_check,
+            strings::concat("file_copy: output file:\n", copy_to,
+                "\nexists, but overwrite was not specified.")
+                .c_str())
+
+        const std::ifstream src(path.data(), std::ios::binary | std::ios::in);
         std::ofstream dst(copy_to, std::ios::binary | std::ios::out);
 
+        if (!dst) {
+            auto e = std::system_error(errno, std::system_category(),
+                std::string("file_copy: dest file: ") + copy_to + " is bad.");
+            std::cerr << e.what() << std::endl;
+            throw e;
+        }
+
+        if (!src) {
+            auto e = std::system_error(errno, std::system_category(),
+                std::string("file_copy: source file: ") + std::string(path)
+                    + " is bad.");
+            std::cerr << e.what() << std::endl;
+            throw e;
+        }
+
+        assert(dst);
+        assert(src);
+
+        assert(dst && src);
         dst << src.rdbuf();
         assert(dst && src);
         if (!dst || !src) {
-            return {};
+            auto e = std::system_error(errno, std::system_category(),
+                std::string("file_copy failed:from path:\n") + std::string(path)
+                    + "\n" + "to path:\n" + std::string(copy_to));
+            std::cerr << e.what() << std::endl;
+            throw e;
         }
-        return copy_to;
-    }
 
-    [[maybe_unused]] static inline std::string get_temp_filename(
-        const std::string extn = ".txt", const std::string& dir_name = "",
-        const std::string& file_prefix = "") {
-        char* c_string = ::_tempnam(dir_name.c_str(), file_prefix.c_str());
-        MYASSERT(c_string != nullptr, "tmpnam returned null")
-        std::string ret(c_string);
-        ret.append(extn);
-        free(c_string);
-        return ret;
+        out_file_path = copy_to; // you only get this on sucess.
+        return {};
     }
 
     // watch it! I throw

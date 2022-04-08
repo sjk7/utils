@@ -36,13 +36,20 @@ static inline auto gender_from_string(const std::string_view s) {
     my::utils::strings::to_upper_branchless(supper);
     if (supper == "M") {
         return gender_t::male;
-    } else if (supper == "F") {
+    } else if (supper == "F" || supper == "F(a)") {
         return gender_t::female;
     } else if (supper.find('/') != std::string::npos) {
         return gender_t::male_female;
     }
 
     return ret;
+}
+
+static const std::array<const char*, 4> genders_for_file
+    = {"F(a)", "F", "M/F", "M"};
+static inline auto string_from_gender(gender_t g) {
+    if (g > gender_t::MAX_GENDER) g = gender_t::assume_female;
+    return std::basic_string_view<char>(genders_for_file[static_cast<int>(g)]);
 }
 
 struct artist_info {
@@ -76,6 +83,10 @@ struct artist_info {
 
     [[nodiscard]] std::string_view gender_to_string() const noexcept {
         return genders[static_cast<int>(gender)];
+    }
+
+    [[nodiscard]] std::string_view gender_to_string_for_file() const noexcept {
+        return ::string_from_gender(gender);
     }
 
     [[nodiscard]] bool is_empty() const noexcept {
