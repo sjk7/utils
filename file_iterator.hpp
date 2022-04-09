@@ -66,7 +66,8 @@ template <typename Cb>
 
 [[maybe_unused]] static inline bool is_dot(const std::string_view name) {
 
-    if (static_cast<int>(name.find_first_not_of('.') < 0)) {
+    const int i = static_cast<int>(name.find_first_not_of('.'));
+    if (i < 0) {
         return true;
     }
     return false;

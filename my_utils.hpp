@@ -14,7 +14,6 @@
 #include <iostream>
 #include <locale>
 #include <sstream>
-#include <string_view>
 #include <cstring>
 #include <system_error>
 #include <vector>
@@ -39,8 +38,6 @@
 // ReSharper disable once CppInconsistentNaming
 #define strcasecmp _stricmp
 #endif
-
-#include "my_assert.hpp"
 
 namespace my {
 static constexpr int no_error = 0;
@@ -96,8 +93,9 @@ namespace utils {
             std::string& sv) {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
-            for (auto i = 0; i < (int)sv.size(); ++i) {
-                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
+            for (auto i = 0; i < static_cast<int>(sv.size()); ++i) {
+                d[i] -= (static_cast<unsigned char>(d[i]) - 'a' < 26U)
+                    << 5; // NOLINT(bugprone-narrowing-conversions)
             }
             return d;
         }
@@ -106,8 +104,8 @@ namespace utils {
             std::string& sv) {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
-            for (auto i = 0; i < (int)sv.size(); ++i) {
-                auto c = (unsigned char*)&d[i];
+            for (auto i = 0; i < static_cast<int>(sv.size()); ++i) {
+                const auto c = reinterpret_cast<unsigned char*>(&d[i]);
                 *c ^= ((*c | 32U) - 'a' < 26) << 5; /* toggle case */
             }
             return d;
@@ -548,9 +546,9 @@ namespace utils {
         using stringnvp_t = name_value_pair<>;
         template <typename N = std::string, typename V = std::string>
         using name_value_pairs_t = std::vector<stringnvp_t>;
-        using nvp_iterator = typename name_value_pairs_t<>::const_iterator;
+        using nvp_iterator = name_value_pairs_t<>::const_iterator;
 
-        [[maybe_unused]] static inline constexpr nvp_iterator find_if_ci(
+        [[maybe_unused]] static inline nvp_iterator find_if_ci(
             nvp_iterator first, nvp_iterator last,
             const std::string_view find_what) {
 
@@ -571,7 +569,6 @@ namespace utils {
         [[maybe_unused]] static inline name_value_pairs_t<> parse_args(
             const int argc, char** argv) {
             name_value_pairs_t<> ret;
-            MYASSERT(argc > 0, "no arguments to parse_args")
 
             const stringvec_t sv(argv + 1, argv + argc);
 
@@ -618,7 +615,7 @@ namespace utils {
                                 // constant. Not useful!
 #endif
             if (should_assert || should_abort || should_throw) {
-                assert("limit reached" == nullptr);
+                // assert("limit reached" == nullptr);
                 MYASSERTE(ctr < max_ctr, msg.c_str(), myflags)
             }
             return -1;
@@ -677,8 +674,8 @@ namespace utils {
     }
 
     [[maybe_unused]] static inline bool file_exists(std::string_view path) {
-        MYASSERT(!path.empty(), "file_exists(): filepath is empty")
-        struct stat buffer;
+        MYASSERT(!path.empty(), "file_exists(): filepath is empty") //-V547
+        struct stat buffer = {};
         return stat(path.data(), &buffer) == 0;
     }
 
@@ -831,7 +828,7 @@ namespace utils {
             return opened_for_write;
         }
         for (const auto& sv : data) {
-            f.write(sv.data(), sv.length());
+            f.write(sv.data(), static_cast<std::streamsize>(sv.length()));
             f.write("\r\n", 2);
             if (!f) break;
         }

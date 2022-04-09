@@ -4,7 +4,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
 // http://www.viva64.com
 #ifndef DELIM_FILE_HPP
-#define DELIM_FILE_HPP
+#define DELIM_FILE_HPP // NOLINT(clang-diagnostic-unused-macros)
 
 #include "my_utils.hpp"
 #include <unordered_map>
@@ -18,7 +18,8 @@ using string_map_type
     = my::utils::strings::case_insensitive_map<std::string_view,
         std::string_view>;
 
-string_map_type make_unique_values(const std::vector<std::string_view>& v) {
+inline string_map_type make_unique_values(
+    const std::vector<std::string_view>& v) {
 
     string_map_type retval{};
     for (const auto& s : v) {
@@ -115,7 +116,7 @@ struct DelimitedTextReader {
         std::fstream f;
         auto ec = utils::file_open_and_read_all(m_filepath, m_sdata);
         if (ec.code() != std::error_code()) {
-            throw ec;
+            throw ec; // NOLINT(misc-throw-by-value-catch-by-reference)
         }
 
         auto lines = utils::strings::split<std::string_view>(m_sdata, "\r\n");
@@ -199,7 +200,7 @@ struct DelimitedTextReader {
         if (clear_out) out.clear();
         const auto col_count = m_columns.size();
         if (col_count == 0) return;
-        const auto& first_column = m_columns[0];
+
         const auto& vals = m_columns[0].values;
         if (vals.empty()) return;
         const auto row_count = vals.size();
@@ -223,18 +224,18 @@ struct DelimitedTextReader {
         } // for
     }
 
-    void rowData(bool clear_out, std::stringstream& out, size_t row_index,
-        std::string_view delim = ",", bool quoted = true,
-        bool escaped = true) const noexcept {
-
-        static std::string empty_string;
+    // ReSharper disable once CppInconsistentNaming
+    void rowData(const bool clear_out, std::stringstream& out,
+        const size_t row_index, const std::string_view delim = ",",
+        const bool quoted = true, const bool escaped = true) const noexcept {
         if (clear_out) {
+            static std::string empty_string;
             out.clear();
             out.str(empty_string);
         }
         const auto col_count = m_columns.size();
         if (col_count == 0) return;
-        const auto& first_column = m_columns[0];
+
         const auto& vals = m_columns[0].values;
         if (vals.empty()) return;
         const auto row_count = vals.size();

@@ -1,3 +1,6 @@
+// ReSharper disable CppClangTidyClangDiagnosticReservedMacroIdentifier
+// ReSharper disable CppInconsistentNaming
+// ReSharper disable CppClangTidyClangDiagnosticReservedIdentifier
 #pragma once
 /*
  * Dirent interface for Microsoft Visual Studio
@@ -30,11 +33,9 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <wchar.h>
 #include <string.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <ctype.h>
@@ -43,7 +44,7 @@
 #define _DIRENT_HAVE_D_TYPE
 
 /* Indicates that d_namlen field is available in dirent structure */
-#define _DIRENT_HAVE_D_NAMLEN
+#define _DIRENT_HAVE_D_NAMLEN // NOLINT(bugprone-reserved-identifier)
 
 /* Entries missing from MSVC 6.0 */
 #if !defined(FILE_ATTRIBUTE_DEVICE)
@@ -212,14 +213,15 @@
 #define _D_EXACT_NAMLEN(p) ((p)->d_namlen)
 
 /* Return the maximum size of a file name */
-#define _D_ALLOC_NAMLEN(p) ((PATH_MAX) + 1)
+#define _D_ALLOC_NAMLEN(p)                                                     \
+    ((PATH_MAX) + 1) // NOLINT(bugprone-reserved-identifier)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Wide-character version */
-struct _wdirent {
+struct _wdirent { // NOLINT(clang-diagnostic-reserved-identifier)
     /* Always zero */
     long d_ino;
 
@@ -238,7 +240,8 @@ struct _wdirent {
     /* File name */
     wchar_t d_name[PATH_MAX + 1];
 };
-typedef struct _wdirent _wdirent;
+typedef struct _wdirent
+    _wdirent; // NOLINT(clang-diagnostic-reserved-identifier)
 
 struct _WDIR {
     /* Current directory entry */
@@ -256,7 +259,7 @@ struct _WDIR {
     /* Initial directory name */
     wchar_t* patt;
 };
-typedef struct _WDIR _WDIR;
+typedef struct _WDIR _WDIR; // NOLINT(clang-diagnostic-reserved-identifier)
 
 /* Multi-byte character version */
 struct dirent {
