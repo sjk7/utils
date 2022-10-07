@@ -1,15 +1,4 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
-
 #pragma once
-// gender.hpp
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4068)
-#endif
 
 #include "my_utils.hpp"
 #include <array>
@@ -36,20 +25,13 @@ static inline auto gender_from_string(const std::string_view s) {
     my::utils::strings::to_upper_branchless(supper);
     if (supper == "M") {
         return gender_t::male;
-    } else if (supper == "F" || supper == "F(a)") {
+    } else if (supper == "F") {
         return gender_t::female;
     } else if (supper.find('/') != std::string::npos) {
         return gender_t::male_female;
     }
 
     return ret;
-}
-
-static const std::array<const char*, 4> genders_for_file
-    = {"F(a)", "F", "M/F", "M"};
-static inline auto string_from_gender(gender_t g) {
-    if (g > gender_t::MAX_GENDER) g = gender_t::assume_female;
-    return std::basic_string_view<char>(genders_for_file[static_cast<int>(g)]);
 }
 
 struct artist_info {
@@ -85,23 +67,12 @@ struct artist_info {
         return genders[static_cast<int>(gender)];
     }
 
-    [[nodiscard]] std::string_view gender_to_string_for_file() const noexcept {
-        return ::string_from_gender(gender);
-    }
-
     [[nodiscard]] bool is_empty() const noexcept {
         return artist.empty() && dur == 0 && line_number == 0
             && line_number_orig == 0;
     }
     [[nodiscard]] bool is_male() const noexcept {
         return static_cast<int>(gender) >= static_cast<int>(gender_t::male);
-    }
-    [[nodiscard]] bool is_female() const noexcept {
-        return static_cast<int>(gender) <= static_cast<int>(gender_t::female);
-    }
-    [[nodiscard]] bool contains_male() const noexcept {
-        return static_cast<int>(gender)
-            >= static_cast<int>(gender_t::male_female);
     }
     [[nodiscard]] bool is_song() const noexcept {
         return dur > limits::jingle_ad_len && dur < limits::max_song_len

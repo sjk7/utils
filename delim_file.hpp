@@ -1,35 +1,13 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
 #ifndef DELIM_FILE_HPP
 #define DELIM_FILE_HPP
 
-#include "my_utils.hpp"
+#include "utils.hpp"
 #include <unordered_map>
-#include <string_view>
-#include <cstdint>
-#include <unordered_set>
 
-namespace my {
-
-using string_map_type
-    = my::utils::strings::case_insensitive_map<std::string_view,
-        std::string_view>;
-
-string_map_type make_unique_values(const std::vector<std::string_view>& v) {
-
-    string_map_type retval{};
-    for (const auto& s : v) {
-        retval.insert({s, s});
-    }
-    return retval;
-}
+namespace sjk {
 
 struct DelimitedTextReader {
     using rows_type = std::vector<std::string_view>;
-    using uid_type = uint32_t;
 
     struct column {
         rows_type values;
@@ -39,35 +17,14 @@ struct DelimitedTextReader {
     using columns_type = std::vector<column>;
     using column_keys_type = std::unordered_map<std::string, column*>;
 
-    static inline auto unique_column_values(const column& col) {
-        return make_unique_values(col.values);
-    }
-
-    inline column* find_column(const std::string& colName) {
-        std::string uFind = my::utils::strings::to_upper(colName);
-        for (auto& c : m_columns) {
-            std::string uFound = my::utils::strings::to_upper(c.name);
-            if (uFound.size() == uFind.size()) {
-                return &c;
-            }
-        }
-        return nullptr;
-    }
-
     DelimitedTextReader(
         std::string_view filepath, std::string_view delim = "\t")
         : DelimitedTextReader(filepath, delim, false) {}
 
     private:
     DelimitedTextReader(
-        bool dummy, std::string_view filepath, std::string_view delim)
-        : m_filepath(filepath), m_delim(delim) {}
-
-    // we call a base constructor here, to make sure the class is fully formed
-    // if we fail to parse the file.
-    DelimitedTextReader(
         std::string_view filepath, std::string_view delim, bool dummy)
-        : DelimitedTextReader(dummy, filepath, delim) {
+        : m_filepath(filepath), m_delim(delim) {
         (void)dummy;
         const auto parse_result = parse();
         if (parse_result != 0) {
@@ -94,23 +51,6 @@ struct DelimitedTextReader {
         }
     }
 
-    // have seen some artist (Celine dion in my case) start with an ETX
-    // character or something stupid
-    std::string_view sanitize(std::string_view what) {
-        static constexpr const char SPACE = ' ';
-        const char* ptr = what.data();
-
-        for (const char c : what) {
-            if (static_cast<int>(c) < static_cast<int>(SPACE)) {
-                ++ptr;
-            } else {
-                break; // just checking for leading bad chars
-            }
-        }
-        const char* end = what.data() + what.size();
-        return std::string_view(ptr, end - ptr);
-    }
-
     int parse() {
         std::fstream f;
         auto ec = utils::file_open_and_read_all(m_filepath, m_sdata);
@@ -135,14 +75,12 @@ struct DelimitedTextReader {
             }
 
             size_t col = 0;
-            int ctr = 0;
 
             for (const auto& field : fields) {
                 auto& c = m_columns.at(col++);
                 auto& v = c.values;
-                v.at(row) = sanitize(field);
-                ++ctr;
-            }
+                v.at(row) = field;
+            };
 
             if (fields.size() != m_columns.size()) {
                 std::cerr << "Incorrect number of fields"
@@ -193,13 +131,13 @@ struct DelimitedTextReader {
         return len - delim.size();
     }
 
-    void rowData(std::string& out, size_t row_index, bool clear_out = true,
+    void rowData(bool clear_out, std::string& out, size_t row_index,
         std::string_view delim = ",", bool quoted = true, bool escaped = true) {
 
         if (clear_out) out.clear();
         const auto col_count = m_columns.size();
         if (col_count == 0) return;
-        const auto& first_column = m_columns[0];
+        const auto first_column = m_columns[0];
         const auto& vals = m_columns[0].values;
         if (vals.empty()) return;
         const auto row_count = vals.size();
@@ -220,7 +158,7 @@ struct DelimitedTextReader {
             if (col.index < col_count - 1) {
                 out.append(delim);
             }
-        } // for
+        }; // for
     }
 
     void rowData(bool clear_out, std::stringstream& out, size_t row_index,
@@ -234,7 +172,7 @@ struct DelimitedTextReader {
         }
         const auto col_count = m_columns.size();
         if (col_count == 0) return;
-        const auto& first_column = m_columns[0];
+        const auto first_column = m_columns[0];
         const auto& vals = m_columns[0].values;
         if (vals.empty()) return;
         const auto row_count = vals.size();
@@ -255,11 +193,11 @@ struct DelimitedTextReader {
             if (col.index < col_count - 1) {
                 out << delim;
             }
-        } // for
+        }; // for
 
         return;
     }
 };
-} // namespace my
+} // namespace sjk
 
 #endif // DELIM_FILE_HPP

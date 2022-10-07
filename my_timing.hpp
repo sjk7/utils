@@ -10,10 +10,10 @@
 #include <chrono>
 #include <cstdio>
 #include <string>
-#include <Windows.h>
+#include <string_view>
 
 #ifdef _WIN32
-
+#include <Windows.h> // yuk
 inline void set_OS_timer() {
     static bool done = false;
     if (!done) {
@@ -59,13 +59,12 @@ class stopwatch {
         if (!m_defeat_destructor_msg) print_output();
     }
 
-    void print_output() const {
+    void print_output() {
         printf("\n============================================================="
                "=\n");
-        auto elapsed = static_cast<double>(elapsed_ms());
+        double elapsed = static_cast<double>(elapsed_ms());
         if (elapsed < 1) {
-            elapsed = elapsed_ns()
-                / 10000000000.0; // NOLINT(bugprone-narrowing-conversions)
+            elapsed = elapsed_ns() / 10000000000.0;
             fprintf(stdout, "%s took %fms.\n", m_sid.c_str(), elapsed);
         } else {
             fprintf(stdout, "%s took %ldms.\n", m_sid.c_str(), (long)elapsed);

@@ -3,15 +3,10 @@
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
 // http://www.viva64.com
-
-// my_assert.hpp
 #pragma once
 #include <string>
 #include <cassert>
 #include <stdexcept>
-#ifdef _MSC_VER
-#pragma warning(disable : 4068)
-#endif
 
 #ifdef _WIN32
 
@@ -44,8 +39,8 @@ struct assert_flags {
         if (!(Expr)) {                                                         \
             char buf[512] = {};                                                \
             const auto file_name = FILENAME_MACRO(File);                       \
-            sprintf_s(buf, 512,                                                \
-                "\nAssert failed:\t%s\nExpected:\t%s\nSource:\t\t%s:%ld\n",    \
+            sprintf(buf,                                                       \
+                "\nAssert failed:\t%s\nExpected:\t%s\nSource:\t\t%s:%d\n",     \
                 Msg, Expr_str, file_name, Line);                               \
             fprintf(stderr, "%s", buf);                                        \
             assert(!(Expr));                                                   \

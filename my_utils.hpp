@@ -14,6 +14,7 @@
 #include <iostream>
 #include <locale>
 #include <sstream>
+#include <string_view>
 #include <cstring>
 #include <system_error>
 #include <vector>
@@ -22,6 +23,8 @@
 #include <sys/stat.h> // yup, windows has it, for checking file exist
 #ifdef _WIN32
 #include <direct.h> // getcwd
+#else
+#include <unistd.h> // getcwd
 #endif
 
 #include <unordered_map>
@@ -38,6 +41,8 @@
 // ReSharper disable once CppInconsistentNaming
 #define strcasecmp _stricmp
 #endif
+
+#include "my_assert.hpp"
 
 namespace my {
 static constexpr int no_error = 0;
@@ -60,14 +65,18 @@ namespace utils {
         using stringvec_t = std::vector<std::string>;
         using stringvecv_t = std::vector<std::string_view>;
 
-        [[maybe_unused]] static std::string random_string(std::size_t length) {
+        inline std::string random_string(std::size_t length, int seed = -1) {
             static const std::string CHARACTERS
                 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx"
                   "yz";
-
+            // auto seed =
+            // std::chrono::system_clock::now().time_since_epoch().count();
+            //  std::mt19937 generator {seed};
             static std::random_device random_device;
             static std::mt19937 generator(random_device());
-
+            if (seed > 0) {
+                generator = std::mt19937(seed);
+            }
             std::uniform_int_distribution<size_t> distribution(
                 size_t(0), CHARACTERS.size() - 1);
 
@@ -93,19 +102,28 @@ namespace utils {
             std::string& sv) {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
-            for (auto i = 0; i < static_cast<int>(sv.size()); ++i) {
-                d[i] -= (static_cast<unsigned char>(d[i]) - 'a' < 26U)
-                    << 5; // NOLINT(bugprone-narrowing-conversions)
+            for (auto i = 0; i < (int)sv.size(); ++i) {
+                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
             }
             return d;
+        }
+
+        [[maybe_unused]] static inline void to_upper_inplace(
+            std::string_view sv) {
+            if (sv.empty()) return;
+            char* d = (char*)&sv[0];
+            for (auto i = 0; i < (int)sv.size(); ++i) {
+                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
+            }
+            return;
         }
 
         [[maybe_unused]] static inline const char* flip_case_branchless(
             std::string& sv) {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
-            for (auto i = 0; i < static_cast<int>(sv.size()); ++i) {
-                const auto c = reinterpret_cast<unsigned char*>(&d[i]);
+            for (auto i = 0; i < (int)sv.size(); ++i) {
+                auto c = (unsigned char*)&d[i];
                 *c ^= ((*c | 32U) - 'a' < 26) << 5; /* toggle case */
             }
             return d;
@@ -142,21 +160,21 @@ namespace utils {
         }
 
         // trim from start (in place)
-        static inline void ltrim(std::string& s) {
+        [[maybe_unused]] static inline void ltrim(std::string& s) {
             s.erase(s.begin(),
                 std::find_if(s.begin(), s.end(),
                     [](unsigned char ch) { return !std::isspace(ch); }));
         }
 
         // trim from end (in place)
-        static inline void rtrim(std::string& s) {
+        [[maybe_unused]] static inline void rtrim(std::string& s) {
             s.erase(std::find_if(s.rbegin(), s.rend(),
                         [](unsigned char ch) { return !std::isspace(ch); })
                         .base(),
                 s.end());
         }
-
-        static inline std::string_view ltrim(const std::string_view& sv,
+        [[maybe_unused]] static inline std::string_view ltrim(
+            const std::string_view& sv,
             const std::string_view trim_what = " \t\r\v\n") {
             std::string_view s{sv};
             s.remove_prefix(
@@ -164,7 +182,8 @@ namespace utils {
             return s;
         }
 
-        static inline std::string_view rtrim(const std::string_view& sv,
+        [[maybe_unused]] static inline std::string_view rtrim(
+            const std::string_view& sv,
             const std::string_view trim_what = " \t\r\v\n") {
             std::string_view s{sv};
             s.remove_suffix((std::min)(
@@ -172,11 +191,20 @@ namespace utils {
             return s;
         }
 
-        static inline std::string_view trim(const std::string_view sv,
+        [[maybe_unused]] static inline std::string_view trim(
+            const std::string_view sv,
             const std::string_view trim_what = " \t\r\v\n") {
             std::string_view ret = ltrim(sv, trim_what);
             ret = rtrim(ret, trim_what);
             return ret;
+        }
+
+        [[maybe_unused]] static inline bool is_numeric(std::string_view s) {
+
+            return !s.empty()
+                && std::find_if(s.begin(), s.end(),
+                       [](unsigned char c) { return !isdigit(c); })
+                == s.end();
         }
 
         // trim from both ends (in place)
@@ -241,7 +269,7 @@ namespace utils {
             }
 
             template <typename T>
-            [[nodiscard]] size_t operator()(T&& txt) const noexcept {
+            [[nodiscard]] size_t operator()(T&&) const noexcept {
                 assert(0);
                 return 0;
             }
@@ -546,9 +574,9 @@ namespace utils {
         using stringnvp_t = name_value_pair<>;
         template <typename N = std::string, typename V = std::string>
         using name_value_pairs_t = std::vector<stringnvp_t>;
-        using nvp_iterator = name_value_pairs_t<>::const_iterator;
+        using nvp_iterator = typename name_value_pairs_t<>::const_iterator;
 
-        [[maybe_unused]] static inline nvp_iterator find_if_ci(
+        [[maybe_unused]] inline const nvp_iterator find_if_ci(
             nvp_iterator first, nvp_iterator last,
             const std::string_view find_what) {
 
@@ -569,6 +597,7 @@ namespace utils {
         [[maybe_unused]] static inline name_value_pairs_t<> parse_args(
             const int argc, char** argv) {
             name_value_pairs_t<> ret;
+            MYASSERT(argc > 0, "no arguments to parse_args");
 
             const stringvec_t sv(argv + 1, argv + argc);
 
@@ -577,9 +606,7 @@ namespace utils {
                 auto it = sv.begin();
                 while (it < the_end) {
                     const auto& next = ++it;
-                    if (it < the_end) {
-                        ret.emplace_back(stringnvp_t{*it, *next});
-                    }
+                    ret.emplace_back(stringnvp_t{*it, *next});
                 }
             }
 
@@ -615,8 +642,8 @@ namespace utils {
                                 // constant. Not useful!
 #endif
             if (should_assert || should_abort || should_throw) {
-                // assert("limit reached" == nullptr);
-                MYASSERTE(ctr < max_ctr, msg.c_str(), myflags)
+                assert("limit reached" == nullptr);
+                MYASSERTE(ctr < max_ctr, msg.c_str(), myflags);
             }
             return -1;
         }
@@ -654,101 +681,60 @@ namespace utils {
         return retval;
     }
 
+    [[maybe_unused]] static inline std::string get_cwd() {
+
+        static std::string buf(1024, 0);
 #ifdef _WIN32
-    static constexpr auto PATH_SEP = '\\';
-    static constexpr auto PATH_SEP_STR = "\\";
+        auto* dummy = _getcwd(&buf[0], 1024);
+        (void)dummy;
 #else
-    static constexpr char PATH_SEP = '/';
-    static constexpr auto PATH_SEP_STR = "/";
+        ::getcwd(buf.data(), 1024);
 #endif
 
-    [[maybe_unused]] static inline std::string_view getcwd() {
-        static std::string buf(1024, 0);
-        const auto* dummy = _getcwd(&buf[0], 1024);
-        if (!buf.ends_with(PATH_SEP)) {
-            buf += PATH_SEP;
-        }
-        (void)dummy;
-        buf.resize(buf.find('\0'));
         return buf;
     }
 
     [[maybe_unused]] static inline bool file_exists(std::string_view path) {
-        MYASSERT(!path.empty(), "file_exists(): filepath is empty") //-V547
-        struct stat buffer = {};
+        assert(!path.empty());
+        struct stat buffer;
         return stat(path.data(), &buffer) == 0;
     }
 
-    [[maybe_unused]] static inline std::string get_temp_file_path(
-        const std::string_view extn = ".bin") {
-        char buf[512]{};
-        tmpnam_s(buf, 512);
-        std::string ret(buf);
-        ret += extn;
-        return ret;
-    }
-
-    [[maybe_unused]] static inline std::error_code file_copy(
-        std::string_view path, std::string& out_file_path,
-        bool overwrite = false) noexcept(false) {
-
-        MYASSERT(path.size() > 4,
-            strings::concat("file_copy: filepath: ", path, " is too short")
-                .c_str())
-        std::string copy_to = out_file_path;
-        if (!out_file_path.empty()) {
-            MYASSERT(out_file_path.size() > 4,
-                strings::concat("file_copy: suspiciously short outfile path:\n",
-                    out_file_path)
-                    .c_str())
-        } else {
-            copy_to = get_temp_file_path();
-        }
-
-        bool owrite_check = !overwrite;
-        if (owrite_check) {
-            owrite_check = file_exists(copy_to);
-        }
-        MYASSERT(!owrite_check,
-            strings::concat("file_copy: output file:\n", copy_to,
-                "\nexists, but overwrite was not specified.")
-                .c_str())
-
-        const std::ifstream src(path.data(), std::ios::binary | std::ios::in);
+    [[maybe_unused]] static inline std::string file_copy(
+        std::string_view path) {
+        std::string copy_to = std::string(path) + ".copy";
+        std::ifstream src(path.data(), std::ios::binary | std::ios::in);
         std::ofstream dst(copy_to, std::ios::binary | std::ios::out);
 
-        if (!dst) {
-            auto e = std::system_error(errno, std::system_category(),
-                std::string("file_copy: dest file: ") + copy_to + " is bad.");
-            std::cerr << e.what() << std::endl;
-            throw e;
-        }
-
-        if (!src) {
-            auto e = std::system_error(errno, std::system_category(),
-                std::string("file_copy: source file: ") + std::string(path)
-                    + " is bad.");
-            std::cerr << e.what() << std::endl;
-            throw e;
-        }
-
-        assert(dst);
-        assert(src);
-
-        assert(dst && src);
         dst << src.rdbuf();
         assert(dst && src);
         if (!dst || !src) {
-            auto e = std::system_error(errno, std::system_category(),
-                std::string("file_copy failed:from path:\n") + std::string(path)
-                    + "\n" + "to path:\n" + std::string(copy_to));
-            std::cerr << e.what() << std::endl;
-            throw e;
+            return {};
         }
-
-        out_file_path = copy_to; // you only get this on sucess.
-        return {};
+        return copy_to;
     }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+    [[maybe_unused]] static inline std::string get_temp_filename(
+        const std::string extn = ".txt", const std::string& dir_name = "",
+        const std::string& file_prefix = "") {
+#ifdef _WIN32
+        char* c_string = ::_tempnam(dir_name.c_str(), file_prefix.c_str());
+#else
+
+        char* c_string = ::tempnam(dir_name.c_str(), file_prefix.c_str());
+        // char* c_string = nullptr;
+        assert(0);
+#endif
+        MYASSERT(c_string != nullptr, "tmpnam returned null")
+        std::string ret(c_string);
+        ret.append(extn);
+        free(c_string);
+        return ret;
+    }
+    #pragma clang diagnostic pop
 
     // watch it! I throw
     [[maybe_unused]] static inline std::system_error file_move(
@@ -785,8 +771,7 @@ namespace utils {
     }
 
     [[maybe_unused]] static inline std::system_error file_open(std::fstream& f,
-        const std::string& file_path,
-        std::ios_base::openmode mode = std::ios::in | std::ios::binary,
+        const std::string& file_path, std::ios_base::openmode mode,
         bool throw_on_fail = false) {
         if (file_path.empty()) {
             auto err = std::system_error(EINVAL, std::system_category(),
@@ -828,7 +813,7 @@ namespace utils {
             return opened_for_write;
         }
         for (const auto& sv : data) {
-            f.write(sv.data(), static_cast<std::streamsize>(sv.length()));
+            f.write(sv.data(), sv.length());
             f.write("\r\n", 2);
             if (!f) break;
         }
@@ -857,7 +842,7 @@ namespace utils {
 
     [[maybe_unused]] static inline std::system_error file_open_and_read_all(
         const std::string& filepath, std::string& data,
-        const std::ios::openmode flags = std::ios::in | std::ios::binary) {
+        const std::ios_base::openmode flags = std::ios::in | std::ios::binary) {
         std::fstream f;
         auto e = file_open(f, filepath, flags, true);
         if (e.code() == std::error_code()) {
@@ -927,7 +912,7 @@ int test_case() {
     return 0;
 }
 
-static inline int test_sv_trim() {
+static inline test_sv_trim() {
     constexpr auto a = "Hello";
     constexpr auto aa = " Hello";
     constexpr auto aaa = "  Hello";
@@ -949,7 +934,6 @@ static inline int test_sv_trim() {
     assert(cc == "Hello");
     const auto ddd = my::utils::strings::ltrim(aaa);
     assert(ddd == "Hello");
-    return my::no_error;
 }
 
 static inline int test_more() {
@@ -997,7 +981,6 @@ static inline int test_map() {
     map3.insert(map.begin(), map.end());
     map3.insert(map2.begin(), map2.end());
     assert(map3.size() == 1);
-    return my::no_error;
 }
 
 static inline int run_all_tests() {
