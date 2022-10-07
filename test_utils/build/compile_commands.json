@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/stevekerr/Documents/utils/test_utils/build",
+  "command": "/usr/bin/clang++ -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++2a -o CMakeFiles/test-utils.dir/main.cpp.o -c /Users/stevekerr/Documents/utils/test_utils/main.cpp",
+  "file": "/Users/stevekerr/Documents/utils/test_utils/main.cpp"
+}
+]
