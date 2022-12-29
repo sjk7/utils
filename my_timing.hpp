@@ -24,6 +24,7 @@ inline void set_OS_timer() {
 }
 #pragma comment(lib, "winmm")
 #else
+// Correctly does precisely nothing in Mac or Linux.
 inline void set_OS_timer() {}
 #endif
 
@@ -31,14 +32,16 @@ namespace my {
 class stopwatch {
     std::string m_sid;
     std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
+    bool m_defeat_destructor_msg = false;
 
     public:
     // nodiscard here produces (rightly) a compiler warning
     // if the user of this class forgets a variable name,
     // for example stopwatch("tick tock") < - - - B  A  D
     // So, always name itm like  stopwatch mystopwatch("tick tock")
-    [[nodiscard]] stopwatch(std::string_view id)
+    [[nodiscard]] stopwatch(std::string_view id, bool autoPrint = true)
         : m_sid(id), m_StartTime(std::chrono::high_resolution_clock::now()) {
+        m_defeat_destructor_msg = !autoPrint;
         set_OS_timer();
     }
 
@@ -60,8 +63,8 @@ class stopwatch {
     }
 
     void print_output() {
-        printf("\n============================================================="
-               "=\n");
+        printf(
+            "=============================================================\n");
         double elapsed = static_cast<double>(elapsed_ms());
         if (elapsed < 1) {
             elapsed = elapsed_ns() / 10000000000.0;
@@ -70,8 +73,8 @@ class stopwatch {
             fprintf(stdout, "%s took %ldms.\n", m_sid.c_str(), (long)elapsed);
         }
 
-        printf("=============================================================="
-               "\n\n");
+        printf(
+            "=============================================================\n");
         fflush(stdout);
     }
     auto stop() { return elapsed_ms(); }
@@ -81,7 +84,6 @@ class stopwatch {
         print_output();
         return ret;
     }
-    bool m_defeat_destructor_msg = false;
 };
 
 } // namespace my
