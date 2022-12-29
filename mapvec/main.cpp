@@ -106,7 +106,11 @@ void test_strings(const size_t n, bool sso) {
     {
         int ctr = 0;
         my::stopwatch sw("Adding items to SteveMap");
-        sm.insert_range(random_strings);
+        // sm.insert_range(random_strings); <-- also works, but perhaps unfair
+        // comparison?
+        for (auto&& s : random_strings) {
+            um.insert({s, s});
+        }
     }
 
     cout << "Shuffling the keys so they are not in the order we added them to "
@@ -126,7 +130,7 @@ void test_strings(const size_t n, bool sso) {
             }
         }
         assert((size_t)fake == std::ssize(ints));
-        cout << "fake output " << fake << endl;
+        // cout << "fake output " << fake << endl;
     }
 
     {
