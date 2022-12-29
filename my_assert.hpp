@@ -4,6 +4,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
 // http://www.viva64.com
 #pragma once
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 #include <string>
 #include <cassert>
 #include <stdexcept>

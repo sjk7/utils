@@ -714,8 +714,10 @@ namespace utils {
         return copy_to;
     }
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
     [[maybe_unused]] static inline std::string get_temp_filename(
         const std::string extn = ".txt", const std::string& dir_name = "",
@@ -734,7 +736,9 @@ namespace utils {
         free(c_string);
         return ret;
     }
-    #pragma clang diagnostic pop
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
     // watch it! I throw
     [[maybe_unused]] static inline std::system_error file_move(
