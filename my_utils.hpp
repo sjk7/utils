@@ -20,6 +20,7 @@
 #include <vector>
 #include <random>
 #include <cassert>
+#include <string_view>
 #include <sys/stat.h> // yup, windows has it, for checking file exist
 #ifdef _WIN32
 #include <direct.h> // getcwd

@@ -41,7 +41,7 @@
 					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1"
 				},
 				{
-					"fragment" : "-std:c++20"
+					"fragment" : "-std:c++17"
 				}
 			],
 			"language" : "CXX",
@@ -51,7 +51,7 @@
 				[
 					1
 				],
-				"standard" : "20"
+				"standard" : "17"
 			},
 			"sourceIndexes" : 
 			[

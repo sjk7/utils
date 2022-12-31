@@ -218,7 +218,7 @@ build ContinuousSubmit: phony CMakeFiles\ContinuousSubmit
 build cmake_object_order_depends_target_nobba: phony || CMakeFiles\nobba.dir
 
 build CMakeFiles\nobba.dir\main.cpp.obj: CXX_COMPILER__nobba_Debug E$:\utils\mapvec\main.cpp || cmake_object_order_depends_target_nobba
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++20
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
   OBJECT_DIR = CMakeFiles\nobba.dir
   OBJECT_FILE_DIR = CMakeFiles\nobba.dir
   TARGET_COMPILE_PDB = CMakeFiles\nobba.dir\

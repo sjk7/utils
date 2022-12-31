@@ -5,9 +5,6 @@
 #include <random>
 #include <unordered_map>
 #include <algorithm>
-#ifndef _MSC_VER
-#pragma GCC diagnostic ignored "-Wvolatile"
-#endif
 
 using namespace std;
 
@@ -18,14 +15,14 @@ int main() {
     cout << "Size of double: " << sizeof(double) << endl;
     SortedVector<int> sv;
     auto insertResult = sv.insert(11);
-    assert(insertResult.Where() != sv.end());
-    assert(insertResult.Inserted());
+    assert(insertResult != sv.end());
+    // assert(insertResult.second);
     assert(sv.size() == 1);
     assert(sv.find(11) != sv.end());
     assert(*(sv.find(11)) == 11);
     auto ins = sv.insert(11);
-    assert(ins.Inserted() == false);
-    assert(*ins.Where() == 11);
+    // assert(ins.second == false);
+    assert(*ins == 11);
     assert(sv.size() == 1);
     cout << endl;
 
@@ -46,17 +43,18 @@ int main() {
     }
 
 #ifdef NDEBUG
-    static const int N = 2'000'000;
-    cout << "******************* TESTING SHORT STRINGS ****************\n\n";
-    test_strings(N, true);
-    cout << "\n******************* TESTING LONG STRINGS ****************\n\n";
-    test_strings(N, false);
-#else
-    static const int N = 1'000'000;
-    test_strings(20'000, true);
-    test_strings(20'000, true);
+    static const int N = 100'000;
 
+#else
+    static const int N = 50'000;
 #endif
+
+    cout << "******************* TESTING " << N << " SHORT STRINGS"
+         << "*****************\n\n ";
+    test_strings(N, true);
+    cout << "******************* TESTING " << N << " LONG STRINGS"
+         << "*****************\n\n ";
+    test_strings(N, false);
 }
 
 std::vector<int> make_random_ints(const size_t N) {
@@ -101,17 +99,57 @@ void test_strings(const size_t n, bool sso) {
         for (auto&& s : random_strings) {
             um.insert({s, s});
         }
+        assert(um.size() == random_strings.size());
     }
 
     {
         int ctr = 0;
+        sm.reserve(random_strings.size());
         my::stopwatch sw("Adding items to SteveMap");
+        // sm.insert_range(random_strings); <-- also works, but perhaps unfair
+        // comparison?
+        for (auto&& s : random_strings) {
+            auto ret = sm.insert({s, s});
+            assert(ret != sm.end());
+            ++ctr;
+        }
+        assert(sm.size() == random_strings.size());
+        assert(sm.values().size() == random_strings.size());
+        assert(sm.keys().size() == random_strings.size());
+    }
+
+    {
+        int ctr = 0;
+        sm.reserve(random_strings.size());
+        my::stopwatch sw(
+            "Adding existing items to SteveMap (nothing should happen)");
+        using pair_type = std::pair<std::string, std::string>;
+        std::vector<pair_type> v;
+        v.reserve(sm.size());
+        for (auto&& s : random_strings) {
+            pair_type p{s, s};
+            v.push_back(p);
+        }
+        sm.insert_range(v);
+
+        assert(sm.size() == random_strings.size());
+        assert(sm.values().size() == random_strings.size());
+        assert(sm.keys().size() == random_strings.size());
+    }
+
+    {
+        int ctr = 0;
+        my::stopwatch sw(
+            "Adding existing items to UnorderedMap (nothing should happen)");
         // sm.insert_range(random_strings); <-- also works, but perhaps unfair
         // comparison?
         for (auto&& s : random_strings) {
             um.insert({s, s});
         }
+        assert(um.size() == random_strings.size());
     }
+
+    // check they won't go in a second time:
 
     cout << "Shuffling the keys so they are not in the order we added them to "
             "the maps ..."
@@ -125,35 +163,43 @@ void test_strings(const size_t n, bool sso) {
         my::stopwatch sw("Finding random (existing) keys in unordered_map");
         for (auto i : ints) {
             auto found = um.find(random_strings[i]);
+            assert(found != um.end());
             if (found != um.end()) {
-                fake++;
+                fake = fake + 1;
             }
         }
-        assert((size_t)fake == std::ssize(ints));
+        assert((size_t)fake == ints.size());
         // cout << "fake output " << fake << endl;
     }
 
     {
+        int ctr = 0;
         volatile int fake = 0;
         my::stopwatch sw("Finding random (existing) keys in stevemap");
-        for (auto i : ints) {
-            auto found = sm.find(random_strings[i]);
+        const auto& keys = sm.keys();
+        for (int i = 0; i < ints.size(); ++i) {
+            auto found = sm.find(keys[i].first);
+            assert(found != sm.end());
             if (found != sm.end()) {
-                fake++;
+
+                fake = fake + 1;
             }
+            ++ctr;
         }
-        assert((size_t)fake == std::ssize(ints));
+        assert((size_t)fake == ints.size());
         // cout << "fake output " << fake << endl;
     }
 
+    auto isize = (int)um.size();
     {
         volatile int fake = 0;
         int idx = 0;
+
         my::stopwatch sw("Finding random (non-existing) keys in unordered_map");
-        for (int i = n; i < n + n; i++) {
+        for (int i = isize; i < isize + n; i++) {
             auto found = um.find(unfindable[idx++]);
             if (found != um.end()) {
-                fake++;
+                fake = fake + 1;
             }
         }
         assert((size_t)fake == 0);
@@ -164,10 +210,10 @@ void test_strings(const size_t n, bool sso) {
         volatile int fake = 0;
         int idx = 0;
         my::stopwatch sw("Finding random (non-existing) keys in Stevemap");
-        for (int i = n; i < n + n; i++) {
+        for (int i = isize; i < isize + n; i++) {
             auto found = sm.find(unfindable[idx++]);
             if (found != sm.end()) {
-                fake++;
+                fake = fake + 1;
             }
         }
         assert((size_t)fake == 0);
