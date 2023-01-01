@@ -73,6 +73,13 @@ template <typename K, typename V> struct key_value_compare {
 template <typename K, typename V>
 using key_value_pair_type = typename std::pair<K, V>;
 
+/*/
+////////////////////////////////////////////////////////////////////////////
+ ////////////// NOTE: this class is slow with string keys //////////////////
+ ////////////// and across the board slower than unordered_map on MAC //////
+ ////////////// In Linux, you should test. But again, avoid string keys ////
+ ///////////////////////////////////////////////////////////////////////////
+/*/
 template <class K, class V, class Compare = key_value_compare<K, V>>
 struct vector_map
     : sorted_vector<key_value_pair_type<K, V>, key_value_compare<K, V>> {
