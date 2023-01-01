@@ -1,3 +1,8 @@
+// This is an independent project of an individual developer. Dear PVS-Studio,
+//  please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
+// http://www.viva64.com
 #pragma once
 
 #include <cassert>
@@ -91,8 +96,8 @@ struct vector_map
     using key_type = K;
     using val_type = V;
     key_value_compare<K, V> cmp = key_value_compare<K, V>();
-    using const_iterator = base_type::const_iterator;
-    using iterator = base_type::iterator;
+    using const_iterator = typename base_type::const_iterator;
+    using iterator = typename base_type::iterator;
 
     using insert_ret_t = std::pair<iterator, bool>;
 
@@ -102,7 +107,7 @@ struct vector_map
 
     vector_map() : base_type(cmp) {}
 
-    auto insert(value_type keyval) {
+    auto insert(const value_type& keyval) {
 
         auto irt = base_type::insert(keyval);
         if (irt.inserted) {

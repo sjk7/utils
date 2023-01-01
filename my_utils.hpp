@@ -104,7 +104,7 @@ namespace utils {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
             for (auto i = 0; i < (int)sv.size(); ++i) {
-                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
+                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5; //-V108
             }
             return d;
         }
@@ -114,7 +114,7 @@ namespace utils {
             if (sv.empty()) return;
             char* d = (char*)&sv[0];
             for (auto i = 0; i < (int)sv.size(); ++i) {
-                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
+                d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5; //-V108
             }
             return;
         }
@@ -124,7 +124,7 @@ namespace utils {
             if (sv.empty()) return nullptr;
             char* d = &sv[0];
             for (auto i = 0; i < (int)sv.size(); ++i) {
-                auto c = (unsigned char*)&d[i];
+                auto c = (unsigned char*)&d[i]; //-V108
                 *c ^= ((*c | 32U) - 'a' < 26) << 5; /* toggle case */
             }
             return d;
@@ -175,7 +175,7 @@ namespace utils {
                 s.end());
         }
         [[maybe_unused]] static inline std::string_view ltrim(
-            const std::string_view& sv,
+            const std::string_view sv,
             const std::string_view trim_what = " \t\r\v\n") {
             std::string_view s{sv};
             s.remove_prefix(
@@ -184,7 +184,7 @@ namespace utils {
         }
 
         [[maybe_unused]] static inline std::string_view rtrim(
-            const std::string_view& sv,
+            const std::string_view sv,
             const std::string_view trim_what = " \t\r\v\n") {
             std::string_view s{sv};
             s.remove_suffix((std::min)(
@@ -496,9 +496,10 @@ namespace utils {
             int mults[] = {1, 60, 3600, 3600 * 24};
             int retval = 0;
             for (const auto& s : splut) {
-                const int mult_index = static_cast<int>(splut.size() - cur - 1);
+                const int mult_index
+                    = static_cast<int>(splut.size() - cur - 1); //-V104
                 assert(mult_index >= 0);
-                if (mult_index >= 4) {
+                if (mult_index >= 4) { //-V112
                     assert(0);
                     return -1;
                 }
@@ -600,7 +601,7 @@ namespace utils {
             name_value_pairs_t<> ret;
             MYASSERT(argc > 0, "no arguments to parse_args");
 
-            const stringvec_t sv(argv + 1, argv + argc);
+            const stringvec_t sv(argv + 1, argv + argc); //-V104
 
             if (sv.size() >= 2) {
                 const auto& the_end = --sv.end();
@@ -660,7 +661,7 @@ namespace utils {
     }
 
     [[maybe_unused]] static inline std::string file_get_name(
-        const std::string_view& filepath, const bool include_extn = false) {
+        const std::string_view filepath, const bool include_extn = false) {
         std::string retval(filepath);
 #ifdef _WIN32
         constexpr const char SEP = '\\';
@@ -721,7 +722,7 @@ namespace utils {
 #endif
 
     [[maybe_unused]] static inline std::string get_temp_filename(
-        const std::string extn = ".txt", const std::string& dir_name = "",
+        const std::string& extn = ".txt", const std::string& dir_name = "",
         const std::string& file_prefix = "") {
 #ifdef _WIN32
         char* c_string = ::_tempnam(dir_name.c_str(), file_prefix.c_str());
@@ -746,7 +747,7 @@ namespace utils {
         const std::string& from, const std::string& to,
         bool delete_dest = true) noexcept(false) {
         MYASSERT(!from.empty() && !to.empty(), "file_move: empty file argument")
-        MYASSERT(from.size() > 4 && to.size() > 4,
+        MYASSERT(from.size() > 4 && to.size() > 4, //-V112
             "file move: suspiciously short file names")
 
         int r = 0;
