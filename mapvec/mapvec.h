@@ -78,8 +78,8 @@ struct vector_map
     : sorted_vector<key_value_pair_type<K, V>, key_value_compare<K, V>> {
 
     using value_type = key_value_pair_type<K, V>;
-    using base_type = typename sorted_vector<key_value_pair_type<K, V>,
-        key_value_compare<K, V>>;
+    using base_type
+        = sorted_vector<key_value_pair_type<K, V>, key_value_compare<K, V>>;
 
     using key_type = K;
     using val_type = V;

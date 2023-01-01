@@ -22,7 +22,7 @@ unsigned long add_to_map(M& m, V& pairs, string id) {
     for (const auto& pr : pairs) {
         auto ins = m.insert(pr);
         assert(ins.second);
-        ctr++;
+        ctr = ctr + 1;
     }
 
     cout << "fake: " << ctr << endl;
@@ -45,7 +45,7 @@ unsigned long iterate_over(const T& m, const std::string& what) {
     volatile unsigned long fake = 0;
     my::stopwatch sw(what);
     for (const auto thing : m) {
-        fake += thing.first;
+        fake = fake + thing.first;
     }
     cout << "fake: " << fake << endl;
     return fake;
