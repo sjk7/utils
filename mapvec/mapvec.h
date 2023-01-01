@@ -74,7 +74,7 @@ template <typename K, typename V>
 using key_value_pair_type = typename std::pair<K, V>;
 
 /*/
-////////////////////////////////////////////////////////////////////////////
+/////////////// REGARDING COMPARISON AGAINST UNORDERED_MAP /////////////////
  ////////////// NOTE: this class is slow with string keys //////////////////
  ////////////// and across the board slower than unordered_map on MAC //////
  ////////////// In Linux, you should test. But again, avoid string keys ////
