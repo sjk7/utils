@@ -12,6 +12,7 @@
 #include <type_traits> // false_type
 #include <utility> // std::pair
 #include <iterator>
+#include <deque>
 
 namespace my {
 
@@ -21,56 +22,98 @@ template <typename I> struct inserted_return_type {
     inserted_return_type(I where, bool inserted)
         : where(where), inserted(inserted) {}
 };
-template <class T, class Compare = std::less<T>, class UNIQUE = std::true_type>
-struct sorted_vector {
-    private:
-    // using std::lower_bound;
-    // using std::vector;
 
-    std::vector<T> V;
+template <typename M> struct batch_inserter {
+
+    private:
+    std::vector<typename M::value_type> items;
 
     public:
-    void reserve(size_t N) { V.reserve(N); }
-    size_t size() const noexcept { return V.size(); }
-    bool empty() const noexcept { return V.empty(); }
+    batch_inserter(M& m, size_t size_hint = 1) : map(m) {
+        items.reserve(size_hint);
+    }
 
-    sorted_vector(const Compare& c = Compare()) : V(), cmp(c) {}
+    M& map;
+
+    ~batch_inserter() {
+        map.insert_default(map.end(), items.begin(), items.end());
+        map.sort();
+    }
+
+    template <typename P> size_t add(P&& pair) {
+        items.emplace_back(std::forward<P>(pair));
+        return items.size();
+    }
+};
+
+template <typename T> using basis = std::vector<T>;
+template <class T, class Compare = std::less<T>, class UNIQUE = std::true_type>
+struct sorted_vector : protected basis<T> {
+
+    private:
+    Compare cmp;
+    template <typename X> friend struct batch_inserter;
+
+    public:
+    using base = basis<T>;
+    using iterator = typename base::iterator;
+    using const_iterator = typename base::const_iterator;
+    using insert_return_type = inserted_return_type<iterator>;
+
+    using base::begin;
+    using base::clear;
+    using base::empty;
+    using base::end;
+    using base::reserve;
+    using base::size;
+
+    sorted_vector(const Compare& c = Compare()) : base(), cmp(c) {}
+
     template <class InputIterator>
     sorted_vector(
         InputIterator first, InputIterator last, const Compare& c = Compare())
-        : V(first, last), cmp(c) {
+        : base(first, last), cmp(c) {
+        sort();
+    }
+
+    virtual ~sorted_vector() = default;
+
+    void sort() {
         std::sort(begin(), end(), cmp);
         if constexpr (UNIQUE::value)
-            V.erase(std::unique(V.begin(), V.end()), V.end());
+            base::erase(std::unique(base::begin(), base::end()), base::end());
     }
-    virtual ~sorted_vector() = default;
-    void clear() { V.clear(); }
-    Compare cmp;
-    typedef typename std::vector<T>::iterator iterator;
-    typedef typename std::vector<T>::const_iterator const_iterator;
-    iterator begin() { return V.begin(); }
-    iterator end() { return V.end(); }
-    const_iterator begin() const { return V.begin(); }
-    const_iterator end() const { return V.end(); }
-    using insert_return_type = inserted_return_type<iterator>;
-
     insert_return_type insert(const T& t) {
         iterator i = std::lower_bound(begin(), end(), t, cmp);
         if (i == end() || cmp(t, *i)) {
-            i = V.insert(i, t);
+            i = base::insert(i, t);
             return insert_return_type{i, true};
         }
         return insert_return_type{i, false};
     }
 
-    const_iterator find(const T& t) const {
-        const_iterator i = std::lower_bound(begin(), end(), t, cmp);
+    typename const_iterator find(const T& t) const {
+        const_iterator i = std::lower_bound(base::begin(), base::end(), t, cmp);
+
         return i == end() || cmp(t, *i) ? end() : i;
+    }
+
+    typename iterator find(const T& t) {
+        iterator i = std::lower_bound(base::begin(), base::end(), t, cmp);
+
+        return i == end() || cmp(t, *i) ? end() : i;
+    }
+
+    private:
+    template <typename ForwardIterator>
+    auto insert_default(
+        typename base::iterator ita, ForwardIterator itb, ForwardIterator itc) {
+        return base::insert(ita, itb, itc);
     }
 };
 
 template <typename K, typename V> struct key_value_compare {
-    bool operator()(const auto& a, const auto& b) const {
+    bool operator()(const std::pair<K, V>& a, const std::pair<K, V>& b) const {
         return a.first < b.first;
     }
 };
@@ -106,6 +149,7 @@ struct vector_map
         : base_type(first, last, cmp) {}
 
     vector_map() : base_type(cmp) {}
+    virtual ~vector_map() = default;
 
     auto insert(const value_type& keyval) {
 
@@ -122,8 +166,14 @@ struct vector_map
         auto found = base_type::find(f);
         return found;
     }
+    auto find(const K& key) const {
+        std::pair f{key, V()};
+        auto found = base_type::find(f);
+        return found;
+    }
 
     void reserve(size_t N) { base_type::reserve(N); }
     void clear() { base_type::clear(); }
 };
+
 } // namespace my
