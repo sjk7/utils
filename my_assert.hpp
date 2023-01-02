@@ -42,7 +42,7 @@ struct assert_flags {
         if (!(Expr)) {                                                         \
             char buf[512] = {};                                                \
             const auto file_name = FILENAME_MACRO(File);                       \
-            sprintf(buf,                                                       \
+            snprintf(buf, 512,                                                       \
                 "\nAssert failed:\t%s\nExpected:\t%s\nSource:\t\t%s:%d\n",     \
                 Msg, Expr_str, file_name, Line);                               \
             fprintf(stderr, "%s", buf);                                        \

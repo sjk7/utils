@@ -92,13 +92,13 @@ struct sorted_vector : protected basis<T> {
         return insert_return_type{i, false};
     }
 
-    typename const_iterator find(const T& t) const {
+    const_iterator find(const T& t) const {
         const_iterator i = std::lower_bound(base::begin(), base::end(), t, cmp);
 
         return i == end() || cmp(t, *i) ? end() : i;
     }
 
-    typename iterator find(const T& t) {
+    iterator find(const T& t) {
         iterator i = std::lower_bound(base::begin(), base::end(), t, cmp);
 
         return i == end() || cmp(t, *i) ? end() : i;

@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <numeric>
-#include "AssocVector.h"
+
 
 using namespace std;
 
@@ -119,7 +119,7 @@ void test_using_strings(const size_t N) {
 
     my::vector_map<string, string> vm;
     std::unordered_map<string, string> um;
-    Loki::AssocVector<string, string> am;
+    //Loki::AssocVector<string, string> am;
     auto pairs = create_string_pairs(N);
     cout << "Testing with " << N << " string pairs" << endl;
 
@@ -127,7 +127,7 @@ void test_using_strings(const size_t N) {
     um = create_map_from_strings(
         um, pairs, "Creating unordered_map from range");
 
-    am = create_map_from_strings(am, pairs, "Creating Loki from range");
+    //am = create_map_from_strings(am, pairs, "Creating Loki from range");
     assert(am.size() == um.size());
     assert(vm.size() == um.size());
     vm.clear();
@@ -149,10 +149,10 @@ void test_using_strings(const size_t N) {
         um, shuffled_keys, "Finding findable strings in unordered_map");
     volatile auto moo
         = find_keys(vm, shuffled_keys, "Finding findable strings in vec_map");
-    volatile auto loki
-        = find_keys(am, shuffled_keys, "Finding findable strings in Loki");
+   // volatile auto loki
+    //    = find_keys(am, shuffled_keys, "Finding findable strings in Loki");
     assert(meh == moo);
-    assert(loki == moo);
+    //assert(loki == moo);
 
     for (auto& pr : shuffled_keys) {
         pr.first += "x";
@@ -161,10 +161,10 @@ void test_using_strings(const size_t N) {
     meh = find_keys(
         um, shuffled_keys, "Finding unfindable strings in unordered_map");
     moo = find_keys(vm, shuffled_keys, "Finding unfindable strings in vec_map");
-    loki = find_keys(am, shuffled_keys, "Finding unfindable strings in Loki");
+    //loki = find_keys(am, shuffled_keys, "Finding unfindable strings in Loki");
     assert(meh == moo);
     assert(meh == 0);
-    assert(loki == 0);
+    //assert(loki == 0);
 }
 
 void make_data(const size_t N) {
@@ -181,37 +181,36 @@ void make_data(const size_t N) {
 
     my::vector_map<int, string> mv;
     unordered_map<int, string> um;
-    Loki::AssocVector<int, string> am;
+   
     volatile auto a = add_to_map(um, pairs, "Adding to unordered_map");
     volatile auto b = add_to_map(mv, pairs, "Adding to vector_map");
-    volatile auto c = add_to_map(am, pairs, "Adding to Loki");
+
     assert(a == b);
     assert(b == c);
-    cout << a << ":" << b << ":" << c << endl;
+    cout << a << ":" << b <<  endl;
 
     assert(um.size() == mv.size());
     assert(um.find(77)->second == "77");
     assert(mv.find(77)->second == "77");
-    assert(am.find(77)->second == "77");
-    assert(am.size() == mv.size());
+
 
     a = iterate_over(um, "Iterating over unordered_map");
     b = iterate_over(mv, "Iterating over vector_map");
-    c = iterate_over(am, "Iterating over Loki");
+   
     assert(a == b);
-    assert(b == c);
-    cout << a << ":" << b << ":" << c << endl;
+ 
+    cout << a << ":" << b << ":"  << endl;
 
     my::vector_map<int, string> mva;
     unordered_map<int, string> uma;
-    Loki::AssocVector<int, string> ama;
+    //Loki::AssocVector<int, string> ama;
 
     uma = construct_map(uma, pairs, "Creating unordered_map from range");
     cout << mv.size() << endl;
     mva = construct_map(mva, pairs, "Creating vector_map from range");
     cout << mv.size() << endl;
     assert(mva.size() == uma.size());
-    ama = construct_map(ama, pairs, "Creating loki from range");
+   // ama = construct_map(ama, pairs, "Creating loki from range");
 
     std::vector<intspair_t> with_dupes(pairs.begin(), pairs.end());
     with_dupes.insert(with_dupes.end(), pairs.begin(), pairs.end());
@@ -225,10 +224,10 @@ void make_data(const size_t N) {
         uma, shuffled_keys, "Finding findable ints in unordered_map");
     volatile auto moo
         = find_keys(mva, shuffled_keys, "Finding findable ints in vec_map");
-    volatile auto Loki
-        = find_keys(ama, shuffled_keys, "Finding findable ints in Loki");
+   // volatile auto Loki
+   //     = find_keys(ama, shuffled_keys, "Finding findable ints in Loki");
     assert(meh == moo);
-    assert(Loki == moo);
+    //assert(Loki == moo);
 
     for (auto& pr : shuffled_keys) {
         pr.first += 1000000000;
@@ -237,10 +236,10 @@ void make_data(const size_t N) {
     meh = find_keys(
         uma, shuffled_keys, "Finding unfindable ints in unordered_map");
     moo = find_keys(mva, shuffled_keys, "Finding unfindable ints in vec_map");
-    Loki = find_keys(ama, shuffled_keys, "Finding unfindable ints in Loki");
+    //Loki = find_keys(ama, shuffled_keys, "Finding unfindable ints in Loki");
     assert(meh == moo);
     assert(meh == 0);
-    assert(Loki == moo);
+    //assert(Loki == moo);
 }
 
 template <typename M>

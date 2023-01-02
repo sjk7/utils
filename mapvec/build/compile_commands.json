@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/stevekerr/Documents/utils/mapvec/build",
+  "command": "/usr/bin/clang++ -O3 -DNDEBUG -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -std=gnu++2a -o CMakeFiles/nobba.dir/main.cpp.o -c /Users/stevekerr/Documents/utils/mapvec/main.cpp",
+  "file": "/Users/stevekerr/Documents/utils/mapvec/main.cpp"
+}
+]
