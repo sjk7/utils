@@ -74,10 +74,20 @@ struct artist_info {
     [[nodiscard]] bool is_male() const noexcept {
         return static_cast<int>(gender) >= static_cast<int>(gender_t::male);
     }
+    [[nodiscard]] bool is_female() const noexcept {
+        return static_cast<int>(gender) <= static_cast<int>(gender_t::female);
+    }
+    [[nodiscard]] bool is_female_song() const noexcept {
+        if (static_cast<int>(gender) <= static_cast<int>(gender_t::female)) {
+            return is_song();
+        }
+        return false;
+    }
     [[nodiscard]] bool is_song() const noexcept {
         return dur > limits::jingle_ad_len && dur < limits::max_song_len
             && !artist.empty();
     }
+    // bool item_female = item.gender <= gender_t::female;
 
     friend void swap(artist_info& lhs, artist_info& rhs) noexcept {
         using std::swap;

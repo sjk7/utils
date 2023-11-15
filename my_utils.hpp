@@ -65,6 +65,7 @@ namespace utils {
 
         using stringvec_t = std::vector<std::string>;
         using stringvecv_t = std::vector<std::string_view>;
+        constexpr const char PATH_SEP = '\\';
 
         inline std::string random_string(std::size_t length, int seed = -1) {
             static const std::string CHARACTERS
@@ -692,7 +693,8 @@ namespace utils {
 #else
         ::getcwd(buf.data(), 1024);
 #endif
-
+        const auto f = buf.find_last_not_of('\0');
+        if (f != std::string::npos) buf.resize(f + 1);
         return buf;
     }
 
@@ -703,8 +705,10 @@ namespace utils {
     }
 
     [[maybe_unused]] static inline std::string file_copy(
-        std::string_view path) {
-        std::string copy_to = std::string(path) + ".copy";
+        std::string_view path, std::string_view extn = ".copy") {
+
+        std::string copy_to{path.data()};
+        copy_to += extn.empty() ? ".copy" : extn;
         std::ifstream src(path.data(), std::ios::binary | std::ios::in);
         std::ofstream dst(copy_to, std::ios::binary | std::ios::out);
 

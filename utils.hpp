@@ -23,7 +23,8 @@ namespace strings {
         static std::random_device random_device;
         static std::mt19937 generator(random_device());
 
-        std::uniform_int_distribution<> distribution(0, CHARACTERS.size() - 1);
+        std::uniform_int_distribution<> distribution(
+            0, (int)(CHARACTERS.size() - 1));
 
         std::string random_string;
 
@@ -57,6 +58,20 @@ namespace strings {
             //*c ^= ((*c|32U)-'a'<26)<<5; /* toggle case */
         }
         return d;
+    }
+
+    [[maybe_unused]] static inline std::string_view to_upper_branchless(
+        std::string_view sv) {
+        char* d = (char*)sv.data();
+        for (auto i = 0; i < (int)sv.size(); ++i) {
+            // d[i] -= 32 * (d[i] >= 'a' && d[i] <= 'z');
+            d[i] -= ((unsigned char)d[i] - 'a' < 26U) << 5;
+
+            //*c += (*c-'A'<26U)<<5; /* lowercase */
+            //*c -= (*c-'a'<26U)<<5; /* uppercase */
+            //*c ^= ((*c|32U)-'a'<26)<<5; /* toggle case */
+        }
+        return sv;
     }
 
     [[maybe_unused]] static inline const char* flip_case_branchless(
@@ -93,6 +108,14 @@ namespace strings {
         return data;
     }
 
+    // for a faster version, see make_upper
+    [[maybe_unused]] static inline std::string_view to_upper(
+        const std::string_view s) {
+        auto data = s;
+        to_upper_branchless(data);
+        return data;
+    }
+
     // trim from start (in place)
     static inline void ltrim(std::string& s) {
         s.erase(s.begin(),
@@ -112,6 +135,21 @@ namespace strings {
     [[maybe_unused]] static inline void trim(std::string& s) {
         ltrim(s);
         rtrim(s);
+    }
+
+    // trim from both ends (in place)
+    [[maybe_unused]] static inline std::string_view trim(std::string_view in) {
+        auto left = in.begin();
+        for (;; ++left) {
+            if (left == in.end()) return std::string_view();
+            if (!isspace(*left)) break;
+        }
+        auto right = in.end() - 1;
+        for (; right > left && isspace(*right); --right)
+            ;
+        auto where_left = left - in.cbegin();
+        char* p = (char*)(in.data() + where_left);
+        return std::string_view(p, std::distance(left, right) + 1);
     }
 
     // trim from start (copying)
@@ -307,23 +345,13 @@ namespace strings {
 
 [[maybe_unused]] static inline std::system_error file_open(std::fstream& f,
     std::string_view file_path, int mode, bool throw_on_fail = false) {
-    if (file_path.empty()) {
-        auto err = std::system_error(EINVAL, std::system_category(),
-            std::string("file_open needs a file to open!"));
-        if (throw_on_fail) throw err;
-        return err;
-    }
-    f.open(file_path.data(), mode);
-    if (!f) {
-        auto e = std::system_error(errno, std::system_category(),
-            std::string("failed to open ") + file_path.data());
-        if (throw_on_fail) {
-            throw e;
-        } else {
-            return e;
-        }
-    }
 
+    f.open(file_path.data(), mode);
+    if (throw_on_fail) {
+        if (!f)
+            throw std::system_error(errno, std::generic_category(),
+                "failed to open file: " + std::string(file_path));
+    }
     return std::system_error(std::error_code());
 }
 
