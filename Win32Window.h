@@ -21,7 +21,7 @@
 #define String std::string
 #endif
 
-#define WIN32WINDOW_TEST 77
+// #define WIN32WINDOW_TEST 77
 #pragma comment(lib, "Comctl32.lib")
 
 namespace win32 {
@@ -191,7 +191,7 @@ class Window
 		const UINT dpi{ GetDpiForWindow(m_hWnd) };
 
 		// Obtain the recommended fonts, which are already correctly scaled for the current DPI
-		NONCLIENTMETRICSW non_client_metrics;
+		NONCLIENTMETRICSW non_client_metrics = {};
 		non_client_metrics.cbSize = sizeof(non_client_metrics);
 
 		if (!SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS,
@@ -218,7 +218,8 @@ class Window
 	int m_flags{ 0 };
 
 protected:
-	virtual LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool& doDefault) {
+	virtual LRESULT WindowProc(HWND, UINT, WPARAM, LPARAM, bool&) {
+
 		return 0;
 	}
 
@@ -229,15 +230,21 @@ public:
 	HINSTANCE hInst() const noexcept { return m_hInstance; }
 	operator HWND() { return(m_hWnd); }
 
+	virtual ~Window() = default;
+	Window(const Window&) = delete;
+	Window(Window&&) = delete;
+	Window& operator=(const Window& rhs) = delete;
+
+	// Creata an instance of a Win32 window.
 	Window(const TCHAR* className, const TCHAR* windowTitle, int flags = -1) : m_className{ className } {
 
 		WNDCLASSEX wc = {};
-		HMODULE hmod = GetCurrentModule();
 		wc.hInstance = ::GetModuleHandle(NULL);
 		wc.lpszClassName = className;
 		wc.lpfnWndProc = &WindowProcStatic;
 		wc.cbSize = sizeof(WNDCLASSEX);
 		wc.cbWndExtra = sizeof(void*);
+		
 		m_hInstance = wc.hInstance;
 
 		ATOM a = ::RegisterClassEx(&wc);
@@ -301,6 +308,30 @@ public:
 
 		// restore and redraw
 		SetWindowPos(hWnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, 0);
+	}
+
+	// The main message loop. You don't have to call into me if you already have a
+	// messagepump in your application.
+	void MessagePump() const {
+
+		BOOL bRet;
+		MSG msg;
+
+		while ((bRet = GetMessage(&msg, 0, 0, 0)) != 0)
+		{
+			if (bRet == -1)
+			{
+				// handle the error and possibly exit
+			}
+			else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				if (closed()) {
+					break;
+				}
+			}
+		}
 	}
 
 }; // Win32Window class
