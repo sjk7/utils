@@ -13,14 +13,16 @@
 #include <string_view>
 
 #ifdef _WIN32
-#include <Windows.h> // yuk
+#define NOMINMAX
+#include <MMsystem.h>
 inline void set_OS_timer() {
-    static bool done = false;
-    if (!done) {
-        ::timeBeginPeriod(1);
-    }
+  static bool done = false;
+  if (!done) {
 
-    done = true;
+    ::timeBeginPeriod(1);
+  }
+
+  done = true;
 }
 #pragma comment(lib, "winmm")
 #else
@@ -30,60 +32,70 @@ inline void set_OS_timer() {}
 
 namespace my {
 class stopwatch {
-    std::string m_sid;
-    std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
-    bool m_defeat_destructor_msg = false;
+  std::string m_sid;
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
+  bool m_defeat_destructor_msg = false;
 
-    public:
-    // nodiscard here produces (rightly) a compiler warning
-    // if the user of this class forgets a variable name,
-    // for example stopwatch("tick tock") < - - - B  A  D
-    // So, always name itm like  stopwatch mystopwatch("tick tock")
-    [[nodiscard]] stopwatch(std::string_view id, bool autoPrint = true)
-        : m_sid(id), m_StartTime(std::chrono::high_resolution_clock::now()) {
-        m_defeat_destructor_msg = !autoPrint;
-        set_OS_timer();
+public:
+  // nodiscard here produces (rightly) a compiler warning
+  // if the user of this class forgets a variable name,
+  // for example stopwatch("tick tock") < - - - B  A  D
+  // So, always name itm like  stopwatch mystopwatch("tick tock")
+  [[nodiscard]] stopwatch(std::string_view id, bool autoPrint = true)
+      : m_sid(id), m_StartTime(std::chrono::high_resolution_clock::now()) {
+    m_defeat_destructor_msg = !autoPrint;
+    set_OS_timer();
+  }
+
+  static inline auto now() {
+    return std::chrono::high_resolution_clock::now().time_since_epoch();
+  }
+
+  static inline auto now_ms() {
+    auto duration = stopwatch::now();
+    auto millis =
+        std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    return millis;
+  }
+
+  auto elapsed_ms() const noexcept {
+    const auto end = std::chrono::high_resolution_clock::now();
+    const auto t = std::chrono::duration_cast<std::chrono::milliseconds>(
+        end - m_StartTime);
+    return t.count();
+  }
+
+  auto elapsed_ns() const noexcept {
+    const auto end = std::chrono::high_resolution_clock::now();
+    const auto t =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_StartTime);
+    return t.count();
+  }
+  ~stopwatch() {
+    if (!m_defeat_destructor_msg)
+      print_output();
+  }
+
+  void print_output() {
+    printf("=============================================================\n");
+    double elapsed = static_cast<double>(elapsed_ms());
+    if (elapsed < 1) {
+      elapsed = elapsed_ns() / 10000000000.0;
+      fprintf(stdout, "%s took %fms.\n", m_sid.c_str(), elapsed);
+    } else {
+      fprintf(stdout, "%s took %ldms.\n", m_sid.c_str(), (long)elapsed);
     }
 
-    auto elapsed_ms() const noexcept {
-        const auto end = std::chrono::high_resolution_clock::now();
-        const auto t = std::chrono::duration_cast<std::chrono::milliseconds>(
-            end - m_StartTime);
-        return t.count();
-    }
-
-    auto elapsed_ns() const noexcept {
-        const auto end = std::chrono::high_resolution_clock::now();
-        const auto t = std::chrono::duration_cast<std::chrono::nanoseconds>(
-            end - m_StartTime);
-        return t.count();
-    }
-    ~stopwatch() {
-        if (!m_defeat_destructor_msg) print_output();
-    }
-
-    void print_output() {
-        printf(
-            "=============================================================\n");
-        double elapsed = static_cast<double>(elapsed_ms());
-        if (elapsed < 1) {
-            elapsed = elapsed_ns() / 10000000000.0;
-            fprintf(stdout, "%s took %fms.\n", m_sid.c_str(), elapsed);
-        } else {
-            fprintf(stdout, "%s took %ldms.\n", m_sid.c_str(), (long)elapsed);
-        }
-
-        printf(
-            "=============================================================\n");
-        fflush(stdout);
-    }
-    auto stop() { return elapsed_ms(); }
-    auto stop_and_print(bool defeat_destructor_msg = true) {
-        m_defeat_destructor_msg = defeat_destructor_msg;
-        auto ret = elapsed_ms();
-        print_output();
-        return ret;
-    }
+    printf("=============================================================\n");
+    fflush(stdout);
+  }
+  auto stop() { return elapsed_ms(); }
+  auto stop_and_print(bool defeat_destructor_msg = true) {
+    m_defeat_destructor_msg = defeat_destructor_msg;
+    auto ret = elapsed_ms();
+    print_output();
+    return ret;
+  }
 };
 
 } // namespace my

@@ -9,8 +9,8 @@
 		],
 		"files" : 
 		[
-			"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.28/Modules/CTestTargets.cmake",
-			"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.28/Modules/CTest.cmake",
+			"C:/Program Files/CMake/share/cmake-3.29/Modules/CTestTargets.cmake",
+			"C:/Program Files/CMake/share/cmake-3.29/Modules/CTest.cmake",
 			"CMakeLists.txt"
 		],
 		"nodes" : 
@@ -56,8 +56,8 @@
 	{
 		"name" : "CTestDashboardTargets"
 	},
-	"id" : "Continuous::@6890427a1f51a3e7e1df",
-	"name" : "Continuous",
+	"id" : "Nightly::@6890427a1f51a3e7e1df",
+	"name" : "Nightly",
 	"paths" : 
 	{
 		"build" : ".",
@@ -85,13 +85,13 @@
 		{
 			"backtrace" : 5,
 			"isGenerated" : true,
-			"path" : "build/CMakeFiles/Continuous",
+			"path" : "build/CMakeFiles/Nightly",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 0,
 			"isGenerated" : true,
-			"path" : "build/CMakeFiles/2f43eec6f887c860ea08c9b148136f68/Continuous.rule",
+			"path" : "build/CMakeFiles/2f43eec6f887c860ea08c9b148136f68/Nightly.rule",
 			"sourceGroupIndex" : 1
 		}
 	],

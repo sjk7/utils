@@ -2,7 +2,7 @@
 <Site BuildName="Win32-MSBuild"
 	BuildStamp="20240214-1256-Experimental"
 	Name="macwin"
-	Generator="ctest-3.28.0-msvc1"
+	Generator="ctest-3.29.0-rc1"
 	CompilerName="C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.39.33519/bin/Hostx64/arm64/cl.exe"
 	CompilerVersion="19.39.33519.0"
 	OSName="Windows"
@@ -18,17 +18,17 @@
 	ProcessorCacheSize="0"
 	NumberOfLogicalCPU="4"
 	NumberOfPhysicalCPU="4"
-	TotalVirtualMemory="11818"
+	TotalVirtualMemory="12130"
 	TotalPhysicalMemory="4086"
 	LogicalProcessorsPerPhysical="1"
 	ProcessorClockFrequency="1000"
 	>
 	<Testing>
-		<StartDateTime>Feb 14 19:07 GMT Standard Time</StartDateTime>
-		<StartTestTime>1707937677</StartTestTime>
+		<StartDateTime>Feb 14 23:33 GMT Standard Time</StartDateTime>
+		<StartTestTime>1707953617</StartTestTime>
 		<TestList/>
-		<EndDateTime>Feb 14 19:07 GMT Standard Time</EndDateTime>
-		<EndTestTime>1707937677</EndTestTime>
+		<EndDateTime>Feb 14 23:33 GMT Standard Time</EndDateTime>
+		<EndTestTime>1707953617</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

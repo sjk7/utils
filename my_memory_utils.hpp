@@ -1,14 +1,15 @@
 #ifndef MY_MEMORY_UTILS_HPP
 #define MY_MEMORY_UTILS_HPP
 
-#include "../../utils/utils.hpp"
+#include "../../utils/my_utils.hpp"
 
 namespace my {
 #include <string.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/mman.h>
 #else
+#include <Windows.h>
 #endif
 
 // https://github.com/MicrosoftDocs/win32/blob/docs/desktop-src/Memory/reserving-and-committing-memory.md
@@ -25,46 +26,41 @@ class Arena {
       unmap();
 
     int errCode = 0;
-#ifndef WIN32
+#ifndef _WIN32
     int flags = PROT_READ | PROT_WRITE;
     int types = MAP_PRIVATE | MAP_ANONYMOUS;
 
     m_begin = (char *)mmap(nullptr, cap, flags, types, 0, 0);
     if (!m_begin)
-    errCode = errno;
+      errCode = errno;
 #else
     m_begin =
-        (char *)VirtualAlloc(0, cap, 
-        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-if (!m_begin)
-errCode = GetLastError();
-        if (errCode){
-            const auto s = my::utils::strings::system_error_string(errCode);
-            if (!s.empty())
-            fprintf(stderr, "VirtualAlloc failed: %s\n", s.c_str());
-        }    
+        (char *)VirtualAlloc(0, cap, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (!m_begin)
+      errCode = GetLastError();
+
     assert(m_begin);
 
 #endif
-if (!m_begin){
-    const auto s = my::utils::strings::system_error_string(errCode);
-}
+    if (errCode) {
+      const auto s = my::utils::strings::system_error_string(errCode);
+      if (!s.empty())
+        fprintf(stderr, "VirtualAlloc failed: %s\n", s.c_str());
+    }
     m_ptr = m_begin;
     m_end = m_begin + cap;
   }
   void unmap() {
-#ifndef WIN32
+#ifndef _WIN32
     if (m_begin)
       munmap(m_begin, capacity());
 #else
-if (m_begin){
-   BOOL bSuccess = VirtualFree(
-                       m_begin,       // Base address of block
-                       0,             // Bytes of committed pages
-                       MEM_RELEASE);  // Decommit the pages
-                       assert(bSuccess);
-
-}
+    if (m_begin) {
+      BOOL bSuccess = VirtualFree(m_begin,      // Base address of block
+                                  0,            // Bytes of committed pages
+                                  MEM_RELEASE); // Decommit the pages
+      assert(bSuccess);
+    }
 #endif
     m_begin = 0;
     m_end = 0;
