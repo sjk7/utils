@@ -1,7 +1,7 @@
 
-#include "../utils/my_timing.hpp"
-#include "../utils/my_utils.hpp"
-#include "../utils/my_memory_utils.hpp"
+#include "../../utils/my_timing.hpp"
+#include "../../utils/my_utils.hpp"
+#include "../../utils/my_memory_utils.hpp"
 #include <vector>
 #include <string>
 #include <cstdio>
@@ -9,6 +9,7 @@
 
 using namespace std;
 using namespace my;
+
 
 std::vector<std::string> make_random_strings(size_t howMany) {
   std::vector<std::string> strings;
@@ -47,7 +48,7 @@ int64_t test_arena(const std::vector<std::string> &v, Arena** a) {
 int64_t test_malloc(const std::vector<std::string> &v) {
 
   int64_t ret = 0;
-  my::stopwatch sw("Testing malloc/free ...");
+  my::stopwatch sw("Testing malloc (no free for fairness) ...");
   char *firstptr = 0;
   for (const auto &s : v) {               // NOLINT
 
@@ -64,7 +65,7 @@ int64_t test_malloc(const std::vector<std::string> &v) {
 
 int main() {
     puts("App started. Please wait ...");
-  auto v = make_random_strings(10'000'000);
+  auto v = make_random_strings(3'000'000);
     Arena* a;
     a  = new Arena();
   int64_t ret = 0;
@@ -80,6 +81,7 @@ int main() {
       ret = test_malloc(v);
     printf("ret d: %zu\n", (size_t)ret);
   }
+  if (a) delete a;
   printf("All done!\n");
   return (int)ret;
 

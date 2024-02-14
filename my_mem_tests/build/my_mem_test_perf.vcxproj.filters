@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\steve\Desktop\utils\my_mem_tests\my_mem_utils_perf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\steve\Desktop\utils\my_mem_tests\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5B7A9A01-5772-37E8-90F5-6B3C5E4DC0CC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

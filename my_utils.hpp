@@ -63,11 +63,18 @@ namespace utils {
 
     namespace strings {
 
+
+
         using stringvec_t = std::vector<std::string>;
         using stringvecv_t = std::vector<std::string_view>;
         constexpr const char PATH_SEP = '\\';
 
-        inline std::string random_string(std::size_t length, int seed = -1) {
+        static inline std::string system_error_string(int e){
+              auto ec = std::error_code(e, std::system_category());
+              return ec.message();
+        }
+
+        static inline std::string random_string(std::size_t length, int seed = -1) {
             static const std::string CHARACTERS
                 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx"
                   "yz";

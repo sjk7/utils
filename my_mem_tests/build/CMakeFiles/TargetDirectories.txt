@@ -1,0 +1,9 @@
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/Experimental.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/Nightly.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/Continuous.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/NightlyMemoryCheck.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/my_mem_test_perf.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/PACKAGE.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/steve/Desktop/utils/my_mem_tests/build/CMakeFiles/ZERO_CHECK.dir
