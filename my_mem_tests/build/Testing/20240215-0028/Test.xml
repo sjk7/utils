@@ -3,8 +3,8 @@
 	BuildStamp="20240215-0028-Experimental"
 	Name="steves-MacBook-Air.local"
 	Generator="ctest-3.19.3"
-	CompilerName="/usr/local/opt/llvm/bin/clang++"
-	CompilerVersion="15.0.6"
+	CompilerName="/usr/bin/clang++"
+	CompilerVersion="15.0.0.15000100"
 	OSName="macOS"
 	Hostname="steves-MacBook-Air.local"
 	OSRelease="14.1"
@@ -18,17 +18,17 @@
 	ProcessorCacheSize="131072"
 	NumberOfLogicalCPU="8"
 	NumberOfPhysicalCPU="8"
-	TotalVirtualMemory="3072"
+	TotalVirtualMemory="5120"
 	TotalPhysicalMemory="8192"
 	LogicalProcessorsPerPhysical="8"
 	ProcessorClockFrequency="0.016384"
 	>
 	<Testing>
-		<StartDateTime>Feb 15 00:29 GMT</StartDateTime>
-		<StartTestTime>1707956964</StartTestTime>
+		<StartDateTime>Feb 15 00:47 GMT</StartDateTime>
+		<StartTestTime>1707958044</StartTestTime>
 		<TestList/>
-		<EndDateTime>Feb 15 00:29 GMT</EndDateTime>
-		<EndTestTime>1707956964</EndTestTime>
+		<EndDateTime>Feb 15 00:47 GMT</EndDateTime>
+		<EndTestTime>1707958044</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

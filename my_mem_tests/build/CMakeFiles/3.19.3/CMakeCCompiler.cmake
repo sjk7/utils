@@ -1,7 +1,7 @@
-set(CMAKE_C_COMPILER "/usr/local/opt/llvm/bin/clang")
+set(CMAKE_C_COMPILER "/usr/bin/clang")
 set(CMAKE_C_COMPILER_ARG1 "")
-set(CMAKE_C_COMPILER_ID "Clang")
-set(CMAKE_C_COMPILER_VERSION "15.0.6")
+set(CMAKE_C_COMPILER_ID "AppleClang")
+set(CMAKE_C_COMPILER_VERSION "15.0.0.15000100")
 set(CMAKE_C_COMPILER_VERSION_INTERNAL "")
 set(CMAKE_C_COMPILER_WRAPPER "")
 set(CMAKE_C_STANDARD_COMPUTED_DEFAULT "11")
@@ -12,16 +12,16 @@ set(CMAKE_C11_COMPILE_FEATURES "c_std_11;c_static_assert")
 
 set(CMAKE_C_PLATFORM_ID "Darwin")
 set(CMAKE_C_SIMULATE_ID "")
-set(CMAKE_C_COMPILER_FRONTEND_VARIANT "GNU")
+set(CMAKE_C_COMPILER_FRONTEND_VARIANT "")
 set(CMAKE_C_SIMULATE_VERSION "")
 
 
 
 
-set(CMAKE_AR "/opt/homebrew/opt/binutils/bin/ar")
-set(CMAKE_C_COMPILER_AR "/usr/local/Cellar/llvm/15.0.6/bin/llvm-ar")
-set(CMAKE_RANLIB "/opt/homebrew/opt/binutils/bin/ranlib")
-set(CMAKE_C_COMPILER_RANLIB "/usr/local/Cellar/llvm/15.0.6/bin/llvm-ranlib")
+set(CMAKE_AR "/usr/bin/ar")
+set(CMAKE_C_COMPILER_AR "")
+set(CMAKE_RANLIB "/usr/bin/ranlib")
+set(CMAKE_C_COMPILER_RANLIB "")
 set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_MT "")
 set(CMAKE_COMPILER_IS_GNUCC )
@@ -71,7 +71,7 @@ endif()
 
 
 
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/usr/local/Cellar/llvm/15.0.6/lib/clang/15.0.6/include;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/usr/include")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/usr/include;/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include")
 set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
 set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

@@ -41,7 +41,7 @@ auto test_arena(const std::vector<std::string> &v, Arena **a, bool &reset) {
     }
     if (ptr)
       memcpy((char *)ptr, s.c_str(), l + 1);
-    ret += l;
+    ret += strlen((char*)ptr); // need this to avoid optimising away
   };
 
   // printf("space() in Arena ================== %zu\n", (*a)->space());
@@ -58,7 +58,7 @@ auto test_malloc(const std::vector<std::string> &v) {
     const auto l = s.size();
     volatile char *ptr = (char *)malloc(l + 1); // NOLINT
     memcpy((void *)ptr, s.c_str(), l + 1);
-    ret -= l;
+    ret -= strlen((char*)ptr); // do not optimise me away!
     if (firstptr == 0)
       firstptr = (char *)ptr;
   }
@@ -113,11 +113,12 @@ int main() {
       "\nARM64 build, Win11 UTM VM on Apple "
       "Silicon:   Arena 1.5-2x\n");
   printf(
-      "ARM64 build, in MACOS on Apple "
-      "Silicon:   Arena 2x +\n");
+      "ARM64 build,  in MACOS on Apple "
+      "Silicon:   Arena 1.8-2.2x +\n");
+
  printf(
-      "ARM64 build, in MACOS on Apple "
-      "Silicon (native):   Arena 5x +\n");
+      "x86_64 build, in MACOS on Apple "
+      "Silicon (native):   Arena 1.8x +\n");
 
   puts("\n\n ------------------- Results -------------------");
   printf("Total Arena   execution time (ms): %lld\n", arena_time);

@@ -64,7 +64,7 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/Clang-C.cmake"
+			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/AppleClang-C.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -85,6 +85,11 @@
 			"isCMake" : true,
 			"isExternal" : true,
 			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/opt/local/share/cmake-3.19/Modules/Platform/Apple-AppleClang-C.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -114,12 +119,17 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/Clang-CXX.cmake"
+			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/AppleClang-CXX.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
 			"path" : "/opt/local/share/cmake-3.19/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/opt/local/share/cmake-3.19/Modules/Platform/Apple-AppleClang-CXX.cmake"
 		},
 		{
 			"isCMake" : true,

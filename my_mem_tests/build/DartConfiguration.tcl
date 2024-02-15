@@ -62,8 +62,8 @@ UpdateOptions:
 UpdateType: 
 
 # Compiler info
-Compiler: /usr/local/opt/llvm/bin/clang++
-CompilerVersion: 15.0.6
+Compiler: /usr/bin/clang++
+CompilerVersion: 15.0.0.15000100
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
