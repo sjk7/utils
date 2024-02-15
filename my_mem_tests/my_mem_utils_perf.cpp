@@ -69,18 +69,18 @@ auto test_malloc(const std::vector<std::string> &v) {
 int main() {
   puts("App started. It deliberately leaks memory.\nDon't worry about "
        "it!\nPlease wait ...");
-  auto v = make_random_strings(1'000'000);
+  auto v = make_random_strings(3'000'000);
 
   int64_t arena_time = 0;
   int64_t malloc_time = 0;
   uint64_t ret = 0;
   int64_t notify_period_ms = 250;
   auto time_marker = my::stopwatch::now_ms();
-  auto start = time_marker;
+
   std::string dot = ".";
   Arena *a;
   a = new Arena();
-  auto arena_orig = a->begin();
+
   int arena_reset_at = 0;
   int loop_max = 20;
   bool reset = false;
@@ -108,7 +108,18 @@ int main() {
     // printf("ret b: %zu\n", (size_t)ret);
   }
 
-  puts("\n\n --------------------- Results -------------------\n");
+  puts(" ---------- Previous results, for comparison --------");
+  printf(
+      "\nARM64 build, Win11 UTM VM on Apple "
+      "Silicon:   Arena 1.5-2x\n");
+  printf(
+      "ARM64 build, in MACOS on Apple "
+      "Silicon:   Arena 2x +\n");
+ printf(
+      "ARM64 build, in MACOS on Apple "
+      "Silicon (native):   Arena 5x +\n");
+
+  puts("\n\n ------------------- Results -------------------");
   printf("Total Arena   execution time (ms): %lld\n", arena_time);
   printf("Total malloc  execution time (ms): %lld\n", malloc_time);
   float ratio = 1;
@@ -122,9 +133,7 @@ int main() {
   if (a)
     delete a;
 
-  printf(
-      "\nPrevious results, for comparison:\nARM64 build, Win11 UTM VM on Apple "
-      "Silicon:   Arena 1.5-2x\n");
+
   printf("\nAll done!\n");
   return (int)ret;
 

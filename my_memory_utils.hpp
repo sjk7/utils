@@ -1,7 +1,7 @@
 #ifndef MY_MEMORY_UTILS_HPP
 #define MY_MEMORY_UTILS_HPP
 
-#include "../../utils/my_utils.hpp"
+#include "./my_utils.hpp"
 
 namespace my {
 #include <string.h>
@@ -68,7 +68,7 @@ class Arena {
   }
 
 public:
-  Arena(size_t capacity = 1 * GB) noexcept : m_ptr(0), m_begin(0), m_end(0) {
+  Arena(size_t capacity = 4 * GB) noexcept : m_ptr(0), m_begin(0), m_end(0) {
     mapmem(capacity);
   }
   ~Arena() { unmap(); }
