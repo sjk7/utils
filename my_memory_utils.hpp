@@ -79,7 +79,7 @@ class Arena
     }
 
   public:
-    Arena(size_t capacity = 4 * GB) noexcept : m_ptr(nullptr), m_begin(nullptr), m_end(nullptr)
+    Arena(size_t capacity = 4 * GBytes) noexcept
     {
         mapmem(capacity);
     }
@@ -98,9 +98,9 @@ class Arena
         m_ptr += sz;
         return ret;
     }
-    static constexpr inline size_t KB = 1024;
-    static constexpr inline size_t MB = KB * 1024;
-    static constexpr inline size_t GB = MB * 1024;
+    static constexpr inline size_t KBytes = 1024;
+    static constexpr inline size_t MBytes = KBytes * 1024;
+    static constexpr inline size_t GBytes = MBytes * 1024;
 
     [[nodiscard]] void *begin() const noexcept
     {
