@@ -881,7 +881,9 @@ template <typename T>
         f.write(sv.data(), sv.length());
         f.write("\r\n", 2);
         if (!f)
+        {
             break;
+        }
     }
     if (!f)
     {
