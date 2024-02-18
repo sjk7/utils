@@ -24,7 +24,6 @@ class Arena
     char *m_end = nullptr;
     void mapmem(size_t cap)
     {
-
         if (m_ptr != nullptr)
         {
             unmap();
@@ -35,7 +34,7 @@ class Arena
         int flags = PROT_READ | PROT_WRITE;
         int types = MAP_PRIVATE | MAP_ANONYMOUS;
 
-        m_begin = (char *)mmap(nullptr, cap, flags, types, 0, 0);
+        m_begin = (char *)mmap(nullptr, cap, flags, types, 0, 0); // NOLINT
         if (m_begin == nullptr)
         {
             errCode = errno;
@@ -50,12 +49,14 @@ class Arena
 #endif
         if (errCode != 0)
         {
-            const auto s = my::utils::strings::system_error_string(errCode);
+            const auto s = my::utils::strings::system_error_string(errCode); // NOLINT
             if (!s.empty())
-                fprintf(stderr, "VirtualAlloc failed: %s\n", s.c_str());
+            {
+                (void)fprintf(stderr, "VirtualAlloc failed: %s\n", s.c_str()); // NOLINT
+            }
         }
         m_ptr = m_begin;
-        m_end = m_begin + cap;
+        m_end = m_begin + cap; //NOLINT
     }
     void unmap()
     {
@@ -79,7 +80,7 @@ class Arena
     }
 
   public:
-    Arena(size_t capacity = 4 * GBytes) noexcept
+    explicit Arena(size_t capacity = 4 * GBytes) noexcept
     {
         mapmem(capacity);
     }
@@ -87,15 +88,36 @@ class Arena
     {
         unmap();
     }
-    void *alloc(size_t sz)
+    Arena &operator=(const Arena &) = delete;
+    Arena(const Arena &other) = delete;
+    Arena(Arena &&other) noexcept : m_ptr(other.m_ptr), m_begin(other.m_begin), m_end(other.m_end)
+    {
+
+        other.m_ptr = nullptr;
+        other.m_begin = nullptr;
+        other.m_end = nullptr;
+    }
+    Arena &operator=(Arena &&other) noexcept
+    {
+        m_ptr = other.m_ptr;
+        m_begin = other.m_begin;
+        m_end = other.m_end;
+
+        other.m_ptr = nullptr;
+        other.m_begin = nullptr;
+        other.m_end = nullptr;
+        return *this;
+    }
+
+    void *alloc(size_t size)
     {
         void *ret = (void *)m_ptr;
-        char *newptr = m_ptr + sz;
+        char *newptr = m_ptr + size; // NOLINT
         if (newptr >= m_end)
         {
             return nullptr;
         }
-        m_ptr += sz;
+        m_ptr += size; // NOLINT
         return ret;
     }
     static constexpr inline size_t KBytes = 1024;
