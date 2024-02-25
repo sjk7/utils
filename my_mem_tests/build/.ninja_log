@@ -1,20 +1,6 @@
 # ninja log v5
-19	1700	1708065225243649781	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1701	5284	1708065228834556519	my_mem_test_perf	3523dad20ab7e8f
+3	1965	1708851672626719939	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	431bb0fda680e2e4
+1968	2210	1708851672874728546	my_mem_test_perf	5b66e221f36f5a0
 3	8	0	clean	1f0117926fe85a19
-10	1632	1708220620711062628	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1633	5170	1708220624255482230	my_mem_test_perf	3523dad20ab7e8f
-18	1642	1708220741145028543	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1643	1718	1708220741228713636	my_mem_test_perf	3523dad20ab7e8f
-9	1368	1708220815987303443	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1369	1437	1708220816059620221	my_mem_test_perf	3523dad20ab7e8f
-17	761	1708220836792408357	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-762	837	1708220836871200429	my_mem_test_perf	3523dad20ab7e8f
-17	1485	1708220907719123842	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1486	1558	1708220907795508506	my_mem_test_perf	3523dad20ab7e8f
-18	1508	1708220957181974844	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1509	1770	1708220957444306025	my_mem_test_perf	3523dad20ab7e8f
-18	1197	1708221028188865598	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1198	1261	1708221028256112819	my_mem_test_perf	3523dad20ab7e8f
-19	1612	1708222286097284723	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	641aa5b1f9c87808
-1612	1876	1708222286370900139	my_mem_test_perf	3523dad20ab7e8f
+7	972	1708851764701695653	CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o	1ad4836e57aea7a
+975	1036	1708851764765729718	my_mem_test_perf	c1efbd10f4556e0d

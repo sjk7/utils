@@ -1,7 +1,7 @@
 [
 {
   "directory": "/Users/stevekerr/Documents/utils/my_mem_tests/build",
-  "command": "/usr/bin/clang++ -O2 -g -DNDEBUG -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -std=gnu++17 -o CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o -c /Users/stevekerr/Documents/utils/my_mem_tests/my_mem_utils_perf.cpp",
+  "command": "/opt/homebrew/bin/aarch64-apple-darwin23-g++-13 -O2 -g -DNDEBUG -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -std=gnu++17 -o CMakeFiles/my_mem_test_perf.dir/my_mem_utils_perf.cpp.o -c /Users/stevekerr/Documents/utils/my_mem_tests/my_mem_utils_perf.cpp",
   "file": "/Users/stevekerr/Documents/utils/my_mem_tests/my_mem_utils_perf.cpp"
 }
 ]

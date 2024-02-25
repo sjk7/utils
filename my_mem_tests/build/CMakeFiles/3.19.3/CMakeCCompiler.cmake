@@ -1,7 +1,7 @@
-set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_C_COMPILER "/opt/homebrew/bin/aarch64-apple-darwin23-gcc-13")
 set(CMAKE_C_COMPILER_ARG1 "")
-set(CMAKE_C_COMPILER_ID "AppleClang")
-set(CMAKE_C_COMPILER_VERSION "15.0.0.15000100")
+set(CMAKE_C_COMPILER_ID "GNU")
+set(CMAKE_C_COMPILER_VERSION "13.2.0")
 set(CMAKE_C_COMPILER_VERSION_INTERNAL "")
 set(CMAKE_C_COMPILER_WRAPPER "")
 set(CMAKE_C_STANDARD_COMPUTED_DEFAULT "11")
@@ -15,16 +15,17 @@ set(CMAKE_C_SIMULATE_ID "")
 set(CMAKE_C_COMPILER_FRONTEND_VARIANT "")
 set(CMAKE_C_SIMULATE_VERSION "")
 
+set(CMAKE_C_COMPILER_SYSROOT "/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr")
+set(CMAKE_COMPILER_SYSROOT "/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr")
 
 
-
-set(CMAKE_AR "/usr/bin/ar")
-set(CMAKE_C_COMPILER_AR "")
-set(CMAKE_RANLIB "/usr/bin/ranlib")
-set(CMAKE_C_COMPILER_RANLIB "")
+set(CMAKE_AR "/opt/homebrew/opt/binutils/bin/ar")
+set(CMAKE_C_COMPILER_AR "/opt/homebrew/bin/aarch64-apple-darwin23-gcc-ar-13")
+set(CMAKE_RANLIB "/opt/homebrew/opt/binutils/bin/ranlib")
+set(CMAKE_C_COMPILER_RANLIB "/opt/homebrew/bin/aarch64-apple-darwin23-gcc-ranlib-13")
 set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_MT "")
-set(CMAKE_COMPILER_IS_GNUCC )
+set(CMAKE_COMPILER_IS_GNUCC 1)
 set(CMAKE_C_COMPILER_LOADED 1)
 set(CMAKE_C_COMPILER_WORKS TRUE)
 set(CMAKE_C_ABI_COMPILED TRUE)
@@ -68,10 +69,10 @@ if(CMAKE_C_CL_SHOWINCLUDES_PREFIX)
 endif()
 
 
+set(CMAKE_C_SYSROOT_FLAG "-isysroot")
+set(CMAKE_C_OSX_DEPLOYMENT_TARGET_FLAG "-mmacosx-version-min=")
 
-
-
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/usr/include;/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include")
-set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
-set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13/include;/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13/include-fixed;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/usr/include;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/System/Library/Frameworks")
+set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "emutls_w;gcc")
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13;/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc;/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

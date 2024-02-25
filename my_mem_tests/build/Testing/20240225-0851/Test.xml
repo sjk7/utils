@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Site BuildName="Darwin-clang++"
-	BuildStamp="20240218-0140-Experimental"
+<Site BuildName="Darwin-aarch64-apple-darwin23-g++-13"
+	BuildStamp="20240225-0851-Experimental"
 	Name="steves-MacBook-Air.local"
 	Generator="ctest-3.19.3"
-	CompilerName="/usr/bin/clang++"
-	CompilerVersion="15.0.0.15000100"
+	CompilerName="/opt/homebrew/bin/aarch64-apple-darwin23-g++-13"
+	CompilerVersion="13.2.0"
 	OSName="macOS"
 	Hostname="steves-MacBook-Air.local"
 	OSRelease="14.1"
@@ -18,17 +18,17 @@
 	ProcessorCacheSize="131072"
 	NumberOfLogicalCPU="8"
 	NumberOfPhysicalCPU="8"
-	TotalVirtualMemory="0"
+	TotalVirtualMemory="5120"
 	TotalPhysicalMemory="8192"
 	LogicalProcessorsPerPhysical="8"
 	ProcessorClockFrequency="0.016384"
 	>
 	<Testing>
-		<StartDateTime>Feb 18 02:16 GMT</StartDateTime>
-		<StartTestTime>1708222592</StartTestTime>
+		<StartDateTime>Feb 25 09:02 GMT</StartDateTime>
+		<StartTestTime>1708851762</StartTestTime>
 		<TestList/>
-		<EndDateTime>Feb 18 02:16 GMT</EndDateTime>
-		<EndTestTime>1708222592</EndTestTime>
+		<EndDateTime>Feb 25 09:02 GMT</EndDateTime>
+		<EndTestTime>1708851762</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

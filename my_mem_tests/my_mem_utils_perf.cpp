@@ -155,22 +155,21 @@ int main()
     printf("\nAll done!\n"); //NOLINT
     return (int)ret;
 
-    /*/
+    
     Arena myArena;
-    printf("Arena capacity() is %zu bytes\n", myArena.capacity());
+    printf("Arena capacity() is %zu bytes\n", myArena.capacity()); //NOLINT
     assert(myArena.capacity() > 0);
 
     size_t old_free = myArena.space();
-    char* strptr = (char*)myArena.alloc(256);
+    char* strptr = (char*)myArena.alloc(256); // NOLINT
     size_t new_free = myArena.space();
     assert(old_free - new_free == 256);
     assert(myArena.size() == 256);
     constexpr const char* greet = "Hello, nobba!";
-    memcpy(strptr, greet, strlen(greet));
+    strcpy(strptr, greet);
 
     assert(strptr);
     puts(strptr);
-    /*/
     return 0;
 }
 
